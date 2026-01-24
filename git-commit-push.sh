@@ -12,6 +12,10 @@ export GH_TOKEN=$GITHUB_TOKEN
 REPO_NAME="DevelopmentDirectorAgent"
 COMMIT_MESSAGE="${1:-Update: committed all files}"
 
+# Configure git to use the token for authentication
+git config --global credential.helper store
+echo "https://$GITHUB_TOKEN@github.com" > ~/.git-credentials
+
 echo "======================================"
 echo "Git Commit & Push Script"
 echo "======================================"
@@ -35,9 +39,12 @@ fi
 if ! git remote get-url origin &>/dev/null; then
     echo "Adding remote origin..."
     USERNAME=$(gh api user --jq .login)
-    git remote add origin "https://github.com/$USERNAME/$REPO_NAME.git"
+    git remote add origin "https://$GITHUB_TOKEN@github.com/$USERNAME/$REPO_NAME.git"
 else
     echo "Remote origin already configured"
+    # Update the remote URL to include the token
+    USERNAME=$(gh api user --jq .login)
+    git remote set-url origin "https://$GITHUB_TOKEN@github.com/$USERNAME/$REPO_NAME.git"
 fi
 
 # Add all files
