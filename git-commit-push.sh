@@ -21,6 +21,14 @@ if [ ! -d .git ]; then
     echo "Initializing git repository..."
     git init
     git branch -M main
+    echo "✓ Git initialized with 'main' branch"
+else
+    # Check if we're on a branch, if not we might be in detached HEAD
+    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+    if [ "$CURRENT_BRANCH" = "HEAD" ]; then
+        echo "Creating main branch..."
+        git checkout -b main
+    fi
 fi
 
 # Check if remote exists, if not add it
@@ -41,16 +49,26 @@ echo ""
 echo "Files to be committed:"
 git status --short
 
+# Check if there are any changes to commit
+if git diff-index --quiet HEAD -- 2>/dev/null; then
+    echo ""
+    echo "No changes to commit"
+    exit 0
+fi
+
 # Commit
 echo ""
 echo "Committing with message: '$COMMIT_MESSAGE'"
 git commit -m "$COMMIT_MESSAGE"
 
 # Check if commit was successful
-if [ $? -eq 0 ]; then
+if [ $? -eq 0 ] || [ $? -eq 1 ]; then
+    # Get current branch name
+    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
+    
     echo ""
-    echo "Pushing to GitHub..."
-    git push -u origin main
+    echo "Pushing to GitHub on branch: $CURRENT_BRANCH..."
+    git push -u origin $CURRENT_BRANCH
     
     if [ $? -eq 0 ]; then
         echo ""
