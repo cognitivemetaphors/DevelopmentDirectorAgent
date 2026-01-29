@@ -67,3 +67,37 @@ Current State: It moves files to Drive.
 Next Step (Epic 3): Once the file is in Drive, your next script (which you’ve also been working on) can grab that PDF and upload it to the Gemini File Search Store to vectorize it for the AI’s “memory.”
 
 Summary: This script turns a simple email from a teacher’s phone into a structured data asset for your fundraising AI, achieving the “unattended” operation required for your MVP.
+
+File: drive_to_gemini_sync.py
+
+Features:
+
+Polls SOURCE_FOLDER_ID for files
+Uploads to Gemini File Search Store (FILE_SEARCH_STORE_ID)
+Moves processed files to PROCESSED_FOLDER_ID
+Logs to console and logs/sync_YYYYMMDD.log
+Supports: PDF, TXT, HTML, CSV, DOCX, PPTX, Google Docs (as PDF), Google Sheets (as CSV)
+OAuth2 authentication with token caching
+Test Results:
+
+Dry-run executed successfully
+OAuth token refreshed automatically
+Logs directory created at logs/
+No files in source folder currently (ready for use)
+Usage:
+
+
+# Dry run (no changes)
+python drive_to_gemini_sync.py --dry-run
+
+# Normal run
+python drive_to_gemini_sync.py
+
+# Verbose logging
+python drive_to_gemini_sync.py --verbose
+Cron Setup (Windows Task Scheduler):
+
+Open Task Scheduler
+Create Task with trigger: repeat every 1 hour
+Action: python drive_to_gemini_sync.py
+
