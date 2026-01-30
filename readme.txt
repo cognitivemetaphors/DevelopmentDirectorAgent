@@ -1,4 +1,5 @@
 FILE: gmail_savepdfs_to_gdrive.py
+===================================
 
 This Python script acts as the “Ingestion Layer” for your Development Director AI agent. Its primary job is to automate the bridge between your school staff’s communication (Email) and your digital storage (Google Drive).
 
@@ -69,6 +70,7 @@ Next Step (Epic 3): Once the file is in Drive, your next script (which you’ve 
 Summary: This script turns a simple email from a teacher’s phone into a structured data asset for your fundraising AI, achieving the “unattended” operation required for your MVP.
 
 File: drive_to_gemini_sync.py
+==============================
 
 Features:
 
@@ -101,3 +103,40 @@ Open Task Scheduler
 Create Task with trigger: repeat every 1 hour
 Action: python drive_to_gemini_sync.py
 
+
+file_search_store_cleanup.py
+============================
+
+Deletes all documents from a Gemini File Search Store.
+
+USAGE:
+    python file_search_store_cleanup.py <store_id> [options]
+
+ARGUMENTS:
+    store_id        File Search Store ID (e.g., fileSearchStores/mystore-abc123)
+                    Can also use short form: mystore-abc123 (auto-prefixes)
+
+OPTIONS:
+    --dry-run       List documents without deleting
+    --force         Skip confirmation prompt
+    --verbose, -v   Enable debug logging
+
+ENVIRONMENT (.env):
+    GEMINI_API_KEY  - Required. API key for Gemini
+    TOKEN_FILE      - OAuth token cache path
+    CREDENTIALS_FILE - OAuth credentials JSON path
+
+EXAMPLES:
+    # List documents (no changes)
+    python file_search_store_cleanup.py stanthonyrag-cehk1qjp1dna --dry-run
+
+    # Delete with confirmation prompt
+    python file_search_store_cleanup.py stanthonyrag-cehk1qjp1dna
+
+    # Delete without confirmation
+    python file_search_store_cleanup.py stanthonyrag-cehk1qjp1dna --force
+
+NOTES:
+    - Uses REST API with force=true to delete documents with content/chunks
+    - Logs to logs/cleanup_YYYYMMDD.log
+    - Requires typing "DELETE ALL" to confirm (unless --force)

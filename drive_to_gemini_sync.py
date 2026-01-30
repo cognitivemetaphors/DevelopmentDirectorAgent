@@ -37,7 +37,7 @@ from googleapiclient.http import MediaIoBaseDownload
 from google import genai
 
 # === CONFIGURATION ===
-ENV_FILE_PATH = r'.env'
+ENV_FILE_PATH = r'C:\Users\acgar\OneDrive\Documents\GoogleAI\.env'
 
 # OAuth2 scopes - full drive access needed for move operations
 SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -298,10 +298,11 @@ def upload_to_file_search_store(genai_client, file_content, filename, store_id, 
 
         logger.info(f'Uploading {filename} to File Search Store...')
 
-        # Upload to Gemini File Search Store
+        # Upload to Gemini File Search Store with display name
         genai_client.file_search_stores.upload_to_file_search_store(
             file=tmp_path,
-            file_search_store_name=store_id
+            file_search_store_name=store_id,
+            config={'display_name': filename}
         )
 
         logger.info(f'Successfully uploaded {filename} to File Search Store')
@@ -488,4 +489,3 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main())
-
