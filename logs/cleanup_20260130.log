@@ -1,0 +1,27 @@
+2026-01-30 21:29:51 - INFO - File Search Store Cleanup 
+2026-01-30 21:29:51 - INFO - ============================================================
+2026-01-30 21:29:51 - INFO - Target Store: fileSearchStores/stanthonyrag-cehk1qjp1dna
+2026-01-30 21:29:51 - INFO - [1/4] Authenticating with OAuth2...
+2026-01-30 21:29:51 - INFO - OAuth authentication successful
+2026-01-30 21:29:51 - INFO - [2/4] Initializing Gemini client...
+2026-01-30 21:29:51 - INFO - Gemini client initialized
+2026-01-30 21:29:51 - INFO - [3/4] Listing documents in store...
+2026-01-30 21:29:51 - DEBUG - connect_tcp.started host='generativelanguage.googleapis.com' port=443 local_address=None timeout=None socket_options=None
+2026-01-30 21:29:51 - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7fa5abc00250>
+2026-01-30 21:29:51 - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x7fa5adbcb2f0> server_hostname='generativelanguage.googleapis.com' timeout=None
+2026-01-30 21:29:51 - DEBUG - start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7fa5abc00290>
+2026-01-30 21:29:51 - DEBUG - send_request_headers.started request=<Request [b'GET']>
+2026-01-30 21:29:51 - DEBUG - send_request_headers.complete
+2026-01-30 21:29:51 - DEBUG - send_request_body.started request=<Request [b'GET']>
+2026-01-30 21:29:51 - DEBUG - send_request_body.complete
+2026-01-30 21:29:51 - DEBUG - receive_response_headers.started request=<Request [b'GET']>
+2026-01-30 21:29:51 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json; charset=UTF-8'), (b'Vary', b'Origin'), (b'Vary', b'X-Origin'), (b'Vary', b'Referer'), (b'Content-Encoding', b'gzip'), (b'Date', b'Fri, 30 Jan 2026 21:29:51 GMT'), (b'Server', b'scaffolding on HTTPServer2'), (b'X-XSS-Protection', b'0'), (b'X-Frame-Options', b'SAMEORIGIN'), (b'X-Content-Type-Options', b'nosniff'), (b'Server-Timing', b'gfet4t7; dur=91'), (b'Alt-Svc', b'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000'), (b'Transfer-Encoding', b'chunked')])
+2026-01-30 21:29:51 - INFO - HTTP Request: GET https://generativelanguage.googleapis.com/v1beta/fileSearchStores/stanthonyrag-cehk1qjp1dna/documents "HTTP/1.1 200 OK"
+2026-01-30 21:29:51 - DEBUG - receive_response_body.started request=<Request [b'GET']>
+2026-01-30 21:29:51 - DEBUG - receive_response_body.complete
+2026-01-30 21:29:51 - DEBUG - response_closed.started
+2026-01-30 21:29:51 - DEBUG - response_closed.complete
+2026-01-30 21:29:51 - INFO - Found 3 document(s)
+2026-01-30 21:29:57 - INFO - Deletion cancelled by user
+2026-01-30 21:29:57 - DEBUG - close.started
+2026-01-30 21:29:57 - DEBUG - close.complete

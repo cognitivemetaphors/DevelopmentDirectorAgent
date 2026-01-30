@@ -1,0 +1,71 @@
+2026-01-30 21:27:22 - INFO - Starting Google Drive to Gemini sync 
+2026-01-30 21:27:22 - INFO - [1/5] Validating configuration...
+2026-01-30 21:27:22 - INFO - Configuration validated successfully
+2026-01-30 21:27:22 - INFO - [2/5] Authenticating with OAuth2...
+2026-01-30 21:27:22 - INFO - Refreshing expired OAuth token...
+2026-01-30 21:27:22 - DEBUG - Starting new HTTPS connection (1): oauth2.googleapis.com:443
+2026-01-30 21:27:22 - DEBUG - https://oauth2.googleapis.com:443 "POST /token HTTP/1.1" 200 None
+2026-01-30 21:27:22 - INFO - Credentials saved to token.pickle
+2026-01-30 21:27:22 - INFO - OAuth authentication successful
+2026-01-30 21:27:22 - INFO - [3/5] Building service clients...
+2026-01-30 21:27:22 - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-01-30 21:27:23 - INFO - Services initialized
+2026-01-30 21:27:23 - INFO - [4/5] Processing files...
+2026-01-30 21:27:23 - DEBUG - URL being requested: GET https://www.googleapis.com/drive/v3/files?q=%271KUcvDEVZKD1s-HPKzskdS9u0__HxTjHC%27+in+parents+and+trashed%3Dfalse+and+mimeType+%21%3D+%27application%2Fvnd.google-apps.folder%27&fields=nextPageToken%2C+files%28id%2C+name%2C+mimeType%2C+size%2C+createdTime%29&pageSize=100&alt=json
+2026-01-30 21:27:23 - INFO - Found 1 file(s) in source folder
+2026-01-30 21:27:23 - INFO - Processing: St. Anthony-Presentation.ppt.pdf (2.2 MB)
+2026-01-30 21:27:23 - DEBUG - URL being requested: GET https://www.googleapis.com/drive/v3/files/1nM6LizCMyk4MgHwWtwETE-JPYRbYbXil?alt=media
+2026-01-30 21:27:25 - DEBUG - Download progress: 100%
+2026-01-30 21:27:25 - INFO - Uploading St. Anthony-Presentation.ppt.pdf to File Search Store...
+2026-01-30 21:27:25 - DEBUG - connect_tcp.started host='generativelanguage.googleapis.com' port=443 local_address=None timeout=None socket_options=None
+2026-01-30 21:27:25 - DEBUG - connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7f1eee9618d0>
+2026-01-30 21:27:25 - DEBUG - start_tls.started ssl_context=<ssl.SSLContext object at 0x7f1eeea20b00> server_hostname='generativelanguage.googleapis.com' timeout=None
+2026-01-30 21:27:25 - DEBUG - start_tls.complete return_value=<httpcore._backends.sync.SyncStream object at 0x7f1eee961890>
+2026-01-30 21:27:25 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-30 21:27:25 - DEBUG - send_request_headers.complete
+2026-01-30 21:27:25 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-30 21:27:25 - DEBUG - send_request_body.complete
+2026-01-30 21:27:25 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-30 21:27:25 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'text/plain; charset=utf-8'), (b'X-GUploader-UploadID', b'AJRbA5V-k2GUxT3uZJtc89jbiMFsk1_HTNdM4O0LWT9AR5xHiKxW3FQGkuRtCmEDUVwypuom94yBwGqyYLuOFHVPJE4pEC_oC9BOiFk9AqKIp6o'), (b'X-Goog-Upload-Status', b'active'), (b'X-Goog-Upload-URL', b'https://generativelanguage.googleapis.com/upload/v1beta/fileSearchStores/stanthonyrag-cehk1qjp1dna:uploadToFileSearchStore?upload_id=AJRbA5V-k2GUxT3uZJtc89jbiMFsk1_HTNdM4O0LWT9AR5xHiKxW3FQGkuRtCmEDUVwypuom94yBwGqyYLuOFHVPJE4pEC_oC9BOiFk9AqKIp6o&upload_protocol=resumable'), (b'X-Goog-Upload-Control-URL', b'https://generativelanguage.googleapis.com/upload/v1beta/fileSearchStores/stanthonyrag-cehk1qjp1dna:uploadToFileSearchStore?upload_id=AJRbA5V-k2GUxT3uZJtc89jbiMFsk1_HTNdM4O0LWT9AR5xHiKxW3FQGkuRtCmEDUVwypuom94yBwGqyYLuOFHVPJE4pEC_oC9BOiFk9AqKIp6o&upload_protocol=resumable'), (b'X-Goog-Upload-Chunk-Granularity', b'8388608'), (b'X-Goog-Upload-Header-x-google-esf-cloud-client-params', b'backend_service_name: "generativelanguage.googleapis.com" backend_fully_qualified_method: "google.ai.generativelanguage.v1beta.RetrieverService.UploadToFileSearchStore"'), (b'X-Goog-Upload-Header-X-Google-Session-Info', b'GgQYECgLIAE6IxIhZ2VuZXJhdGl2ZWxhbmd1YWdlLmdvb2dsZWFwaXMuY29t'), (b'X-Goog-Upload-Header-X-Google-Backends', b'unix:/tmp/esfbackend.1769676672.71955.3928628'), (b'X-Goog-Upload-Header-Content-Type', b'application/json; charset=UTF-8'), (b'X-Goog-Upload-Header-X-Google-Security-Signals', b'FRAMEWORK=ONE_PLATFORM,ENV=borg,ENV_DEBUG=borg_user:genai-api;borg_job:prod.genai-api'), (b'X-Goog-Upload-Header-Vary', b'Origin'), (b'X-Goog-Upload-Header-Vary', b'X-Origin'), (b'X-Goog-Upload-Header-Vary', b'Referer'), (b'X-Goog-Upload-Header-X-Google-GFE-Backend-Request-Cost', b'6.7991'), (b'Content-Length', b'0'), (b'Date', b'Fri, 30 Jan 2026 21:27:25 GMT'), (b'Server', b'UploadServer'), (b'Alt-Svc', b'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000')])
+2026-01-30 21:27:25 - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/upload/v1beta/fileSearchStores/stanthonyrag-cehk1qjp1dna:uploadToFileSearchStore "HTTP/1.1 200 OK"
+2026-01-30 21:27:25 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-30 21:27:25 - DEBUG - receive_response_body.complete
+2026-01-30 21:27:25 - DEBUG - response_closed.started
+2026-01-30 21:27:25 - DEBUG - response_closed.complete
+2026-01-30 21:27:25 - DEBUG - send_request_headers.started request=<Request [b'POST']>
+2026-01-30 21:27:25 - DEBUG - send_request_headers.complete
+2026-01-30 21:27:25 - DEBUG - send_request_body.started request=<Request [b'POST']>
+2026-01-30 21:27:25 - DEBUG - send_request_body.complete
+2026-01-30 21:27:25 - DEBUG - receive_response_headers.started request=<Request [b'POST']>
+2026-01-30 21:27:28 - DEBUG - receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'Content-Type', b'application/json; charset=UTF-8'), (b'X-GUploader-UploadID', b'AJRbA5V-k2GUxT3uZJtc89jbiMFsk1_HTNdM4O0LWT9AR5xHiKxW3FQGkuRtCmEDUVwypuom94yBwGqyYLuOFHVPJE4pEC_oC9BOiFk9AqKIp6o'), (b'X-Goog-Upload-Status', b'final'), (b'Vary', b'Origin'), (b'Vary', b'X-Origin'), (b'Vary', b'Referer'), (b'Content-Length', b'482'), (b'Date', b'Fri, 30 Jan 2026 21:27:28 GMT'), (b'Server', b'UploadServer'), (b'Alt-Svc', b'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000')])
+2026-01-30 21:27:28 - INFO - HTTP Request: POST https://generativelanguage.googleapis.com/upload/v1beta/fileSearchStores/stanthonyrag-cehk1qjp1dna:uploadToFileSearchStore?upload_id=AJRbA5V-k2GUxT3uZJtc89jbiMFsk1_HTNdM4O0LWT9AR5xHiKxW3FQGkuRtCmEDUVwypuom94yBwGqyYLuOFHVPJE4pEC_oC9BOiFk9AqKIp6o&upload_protocol=resumable "HTTP/1.1 200 OK"
+2026-01-30 21:27:28 - DEBUG - receive_response_body.started request=<Request [b'POST']>
+2026-01-30 21:27:28 - DEBUG - receive_response_body.complete
+2026-01-30 21:27:28 - DEBUG - response_closed.started
+2026-01-30 21:27:28 - DEBUG - response_closed.complete
+2026-01-30 21:27:28 - INFO - Successfully uploaded St. Anthony-Presentation.ppt.pdf to File Search Store
+2026-01-30 21:27:28 - DEBUG - URL being requested: PATCH https://www.googleapis.com/drive/v3/files/1nM6LizCMyk4MgHwWtwETE-JPYRbYbXil?addParents=1p8AgL0JwAWq-kAI_8SQ1DfYMjGQWRtBj&removeParents=1KUcvDEVZKD1s-HPKzskdS9u0__HxTjHC&fields=id%2C+parents&alt=json
+2026-01-30 21:27:29 - INFO - Moved St. Anthony-Presentation.ppt.pdf to processed folder
+2026-01-30 21:27:29 - INFO - [5/5] Generating summary...
+2026-01-30 21:27:29 - INFO - ==================================================
+2026-01-30 21:27:29 - INFO - === Sync Summary ===
+2026-01-30 21:27:29 - INFO - Files found: 1
+2026-01-30 21:27:29 - INFO - Files processed: 1
+2026-01-30 21:27:29 - INFO - Files skipped: 0
+2026-01-30 21:27:29 - INFO - Files failed: 0
+2026-01-30 21:27:29 - INFO - Sync completed successfully
+2026-01-30 21:27:29 - INFO - ==================================================
+2026-01-30 21:27:29 - DEBUG - close.started
+2026-01-30 21:27:29 - DEBUG - close.complete
+2026-01-30 21:27:46 - INFO - Starting Google Drive to Gemini sync 
+2026-01-30 21:27:46 - INFO - [1/5] Validating configuration...
+2026-01-30 21:27:46 - INFO - Configuration validated successfully
+2026-01-30 21:27:46 - INFO - [2/5] Authenticating with OAuth2...
+2026-01-30 21:27:46 - INFO - OAuth authentication successful
+2026-01-30 21:27:46 - INFO - [3/5] Building service clients...
+2026-01-30 21:27:46 - INFO - file_cache is only supported with oauth2client<4.0.0
+2026-01-30 21:27:46 - INFO - Services initialized
+2026-01-30 21:27:46 - INFO - [4/5] Processing files...
+2026-01-30 21:27:46 - DEBUG - URL being requested: GET https://www.googleapis.com/drive/v3/files?q=%271KUcvDEVZKD1s-HPKzskdS9u0__HxTjHC%27+in+parents+and+trashed%3Dfalse+and+mimeType+%21%3D+%27application%2Fvnd.google-apps.folder%27&fields=nextPageToken%2C+files%28id%2C+name%2C+mimeType%2C+size%2C+createdTime%29&pageSize=100&alt=json
+2026-01-30 21:27:46 - INFO - Found 0 file(s) in source folder
+2026-01-30 21:27:46 - INFO - No files to process

@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joy & Caregiving Foundation - 501(c)(3) Non-Profit</title>
+    <meta name="description" content="Joy & Caregiving Foundation - Supporting education and development for underprivileged children">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f7fafc;
+        }
+
+        .nav {
+            background: linear-gradient(135deg, #7c3aed 0%, #6b21a8 100%);
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            background: white;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+	.logo-class {
+	    width: 80px;
+	    height: auto 
+	}
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .site-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .site-subtitle {
+            font-size: 0.75rem;
+            color: #e9d5ff;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            opacity: 0.8;
+            border-bottom: 2px solid white;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #7c3aed 0%, #6b21a8 100%);
+            color: white;
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #e9d5ff;
+        }
+
+        .hero-location {
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .card h2 {
+            color: #7c3aed;
+            margin-bottom: 1rem;
+            font-size: 1.75rem;
+        }
+
+        .card h3 {
+            color: #7c3aed;
+            margin-bottom: 0.75rem;
+            font-size: 1.5rem;
+        }
+
+        .card p {
+            color: #4a5568;
+            margin-bottom: 1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: #f3e8ff;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            text-align: center;
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 1rem;
+            color: #7c3aed;
+        }
+
+        .feature-card h4 {
+            font-size: 1.25rem;
+            color: #1a202c;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: #4a5568;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #7c3aed;
+            color: white;
+            padding: 0.875rem 2rem;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background 0.3s;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            background: #6b21a8;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #7c3aed;
+            border: 2px solid #7c3aed;
+        }
+
+        .btn-secondary:hover {
+            background: #f3e8ff;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .highlight-box {
+            background: #f3e8ff;
+            border-left: 4px solid #7c3aed;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .highlight-box strong {
+            color: #7c3aed;
+        }
+
+        .alert-box {
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .list-section {
+            margin: 1.5rem 0;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .list-bullet {
+            color: #7c3aed;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            line-height: 1.5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #7c3aed;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #f7fafc;
+        }
+
+        .footer {
+            background: #2d3748;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .footer a {
+            color: #a78bfa;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: #c4b5fd;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .icon {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* Chat Styles */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            background: #f7fafc;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .chat-message {
+            margin-bottom: 1rem;
+            display: flex;
+        }
+
+        .chat-message.user {
+            justify-content: flex-end;
+        }
+
+        .chat-message.bot {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            line-height: 1.5;
+        }
+
+        .chat-message.user .message-content {
+            background: #7c3aed;
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .chat-message.bot .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e2e8f0;
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input:focus {
+            border-color: #7c3aed;
+        }
+
+        .chat-send-btn {
+            padding: 0.875rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-disclaimer {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #718096;
+            margin-top: 0.75rem;
+        }
+
+        .chat-message.bot .message-content.loading {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #7c3aed;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: #6b21a8;
+                padding: 1rem 2rem;
+                gap: 0.5rem;
+            }
+
+            .nav-links.mobile-open {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 1.75rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.875rem;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="logo-section">
+                <div class="logo">
+		    <img src="images/jcglogo.png" alt="JoyandCaregiving logo" class="logo-class" styly="width: 1%; height: 1%; object-hit; contain;">
+                    <!-- <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2">
+		    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/> -->
+                    </svg>
+                </div>
+                <div>
+                    <div class="site-title">Joy & Caregiving Foundation</div>
+                    <div class="site-subtitle">501(c)(3) Non-Profit</div>
+                </div>
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#" onclick="showPage('home')" class="active" id="nav-home">Home</a></li>
+                <li><a href="#" onclick="showPage('about')" id="nav-about">About</a></li>
+                <li><a href="#" onclick="showPage('projects')" id="nav-projects">Projects</a></li>
+                <li><a href="#" onclick="showPage('donate')" id="nav-donate">Donate</a></li>
+                <li><a href="#" onclick="showPage('contact')" id="nav-contact">Contact</a></li>
+                <li><a href="#" onclick="showPage('chat')" id="nav-chat">Ask Us</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HOME PAGE -->
+    <div id="home" class="page active">
+        <div class="hero">
+            <h1>Joy & Caregiving Foundation</h1>
+            <p>Supporting education and development for underprivileged children</p>
+        </div>
+
+        <div class="container">
+            <div class="card">
+                <h2>Our Mission</h2>
+                <p>We are committed to creating opportunities for children who lack access to quality education, helping them develop into tomorrow's professionals.</p>
+            </div>
+
+            <div class="card">
+                <h2>About Us</h2>
+                <p>Joy & Caregiving Foundation is a 501(c)(3) non-profit organization dedicated to supporting educational initiatives for underprivileged children worldwide. Our flagship project, St. Anthony Development and Learning Center in the Philippines, provides quality kindergarten education to children who would otherwise not have access to formal schooling.</p>
+            </div>
+
+            <div class="grid">
+                <div class="feature-card">
+                    <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <h4>Community Focus</h4>
+                    <p>Supporting families and children in need</p>
+                </div>
+                <div class="feature-card">
+                    <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                    </svg>
+                    <h4>Quality Education</h4>
+                    <p>World-class curriculum and teaching</p>
+                </div>
+                <div class="feature-card">
+                    <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                    <h4>Lasting Impact</h4>
+                    <p>Creating sustainable change</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn" onclick="showPage('projects')" style="margin-right: 1rem; margin-bottom: 1rem;">View Our Projects</button>
+                <button class="btn btn-secondary" onclick="showPage('donate')" style="margin-bottom: 1rem;">Support Our Mission</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABOUT PAGE -->
+    <div id="about" class="page">
+        <div class="hero">
+            <h1>About Us</h1>
+        </div>
+
+        <div class="container">
+            <div class="card">
+                <p>The Joy & Caregiving Foundation is a 501(c)(3) non-profit organization dedicated to improving the lives of underprivileged children through education and support programs.</p>
+                <p>Founded on the belief that every child deserves access to quality education, we work with local partners to identify communities in need and develop sustainable educational programs that create lasting impact.</p>
+                
+                <h3>Our Approach</h3>
+                <div class="list-section">
+                    <div class="list-item">
+                        <span class="list-bullet">•</span>
+                        <span>Providing free or low-cost quality education to children from low-income families</span>
+                    </div>
+                    <div class="list-item">
+                        <span class="list-bullet">•</span>
+                        <span>Supporting teachers with training and resources</span>
+                    </div>
+                    <div class="list-item">
+                        <span class="list-bullet">•</span>
+                        <span>Engaging parents through empowerment programs</span>
+                    </div>
+                    <div class="list-item">
+                        <span class="list-bullet">•</span>
+                        <span>Creating sustainable infrastructure for long-term impact</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROJECTS PAGE -->
+    <div id="projects" class="page">
+        <div class="hero">
+            <h1>St. Anthony Development and Learning Center</h1>
+            <p>"A haven that cares and nurtures young minds into tomorrow's professionals"</p>
+            <div class="hero-location">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span>Brgy Cutcut, Guiguinto Bulacan, Philippines</span>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="grid-2">
+                <div class="card">
+                    <h2>Vision</h2>
+                    <p>To create a productive individual with strong commitment to serve God, country and mankind.</p>
+                </div>
+                <div class="card">
+                    <h2>Mission</h2>
+                    <p>St. Anthony DLC strives to achieve excellence by providing world class quality education that will empower individuals to develop their full potentials that they may become responsible citizens who value education as a lifelong process.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Objectives</h2>
+                <div class="list-section">
+                    <div class="list-item">
+                        <span class="list-bullet">•</span>
+                        <span>Develop creative and critical thinking</span>
+                    </div>
+                    <div class="list-item">
+                        <span class="list-bullet">•</span>
+                        <span>Be the school of the future with emphasis on Science and Math skills</span>
+                    </div>
+                    <div class="list-item">
+                        <span class="list-bullet">•</span>
+                        <span>Develop love for God, country and mankind guided by four core values: dedication, loyalty, morality and intelligence</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Curriculum</h2>
+                <p>St. Anthony DLC offers a curriculum aligned with the Department of Education Standards to children in Junior Kinder and Senior Kinder. Through a creative play approach, students' interests and needs are met to help them develop their full potentials.</p>
+            </div>
+
+            <div class="card">
+                <h2>Commitment to the Community</h2>
+                <p>St. Anthony DLC provides free quality education to underprivileged children of Cutcut Guiguinto Bulacan. Every year, there are at least 20 students or more who benefit from this free quality Kinder education from the school.</p>
+                <p>The school offers a very minimal amount of school fees to those children whose families cannot afford to send them to private schools due to high tuition fees. The family pays an amount proportional to their income - as low as Php 5,000.00 compared with Php 15,000.00 at nearby schools.</p>
+                
+                <div class="highlight-box">
+                    <p><strong>💰 Sponsor a Student</strong></p>
+                    <p>For $150 USD per year, you can provide free quality education to an underprivileged child.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Enrollment Data</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Academic Year</th>
+                            <th>Total Students</th>
+                            <th>Scholars</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2015-2016</td>
+                            <td>45</td>
+                            <td>25</td>
+                        </tr>
+                        <tr>
+                            <td>2016-2017</td>
+                            <td>50</td>
+                            <td>25</td>
+                        </tr>
+                        <tr>
+                            <td>2017-2018</td>
+                            <td>53</td>
+                            <td>20</td>
+                        </tr>
+                        <tr>
+                            <td>2018-2019</td>
+                            <td>60</td>
+                            <td>30</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>Other Programs</h2>
+                <div class="list-section">
+                    <div class="list-item">
+                        <span class="list-bullet">•</span>
+                        <span>Feeding Program</span>
+                    </div>
+                    <div class="list-item">
+                        <span class="list-bullet">•</span>
+                        <span>Parent Empowerment Program (literacy and livelihood programs for parents)</span>
+                    </div>
+                    <div class="list-item">
+                        <span class="list-bullet">•</span>
+                        <span>Environmental Awareness Program</span>
+                    </div>
+                    <div class="list-item">
+                        <span class="list-bullet">•</span>
+                        <span>Monthly themed activities providing engaging learning experiences</span>
+                    </div>
+                    <div class="list-item">
+                        <span class="list-bullet">•</span>
+                        <span>Christmas gift giving from generous sponsors</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card alert-box">
+                <h2 style="color: #dc2626;">Current Needs</h2>
+                <p>The school is currently in need of help to continue construction of a building that was left undone since 2015 due to insufficient funds. Two additional rooms are planned, which will help the school increase enrollment and provide support to more scholars.</p>
+                <button class="btn btn-danger" onclick="showPage('donate')">Support This Project</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DONATE PAGE -->
+    <div id="donate" class="page">
+        <div class="hero">
+            <h1>Donate</h1>
+        </div>
+
+        <div class="container">
+            <div class="card">
+                <p style="font-size: 1.125rem;">Your generous support helps us provide quality education to children who would otherwise not have access to formal schooling. Every donation makes a real difference in a child's life.</p>
+            </div>
+
+            <div class="card">
+                <h2>Ways to Give</h2>
+                
+                <div style="margin: 2rem 0;">
+                    <div style="border-left: 4px solid #7c3aed; padding-left: 1.5rem; margin-bottom: 2rem;">
+                        <h3>Sponsor a Student</h3>
+                        <p>$150 USD per year provides complete kindergarten education, materials, and support for one child.</p>
+                    </div>
+
+                    <div style="border-left: 4px solid #7c3aed; padding-left: 1.5rem; margin-bottom: 2rem;">
+                        <h3>Building Fund</h3>
+                        <p>Help us complete the construction of two additional classrooms to serve more students.</p>
+                    </div>
+
+                    <div style="border-left: 4px solid #7c3aed; padding-left: 1.5rem; margin-bottom: 2rem;">
+                        <h3>Program Support</h3>
+                        <p>Contribute to our feeding program, parent empowerment initiatives, or teacher training.</p>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Contact Us to Donate</h3>
+                    <p>For information on how to donate, please contact us at:</p>
+                    <p style="margin-top: 1rem; font-size: 1.25rem;">
+                        <a href="mailto:jcgfoundation@yahoo.com" style="color: #7c3aed; font-weight: 600;">
+                            ✉️ jcgfoundation@yahoo.com
+                        </a>
+                    </p>
+                    <p style="margin-top: 1rem; font-size: 0.875rem; color: #4a5568;">
+                        The Joy & Caregiving Foundation is a registered 501(c)(3) non-profit organization. Your donations are tax-deductible to the extent allowed by law.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTACT PAGE -->
+    <div id="contact" class="page">
+        <div class="hero">
+            <h1>Contact Us</h1>
+        </div>
+
+        <div class="container">
+            <div class="card">
+                <p style="font-size: 1.125rem;">We'd love to hear from you! Whether you're interested in supporting our mission, learning more about our projects, or getting involved, please reach out.</p>
+            </div>
+
+            <div class="card">
+                <h2>Get In Touch</h2>
+                <div style="display: flex; align-items: center; margin-top: 1.5rem;">
+                    <svg style="color: #7c3aed; margin-right: 1rem;" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                    <div>
+                        <p style="font-weight: 600; color: #1a202c; margin-bottom: 0.25rem;">Email</p>
+                        <a href="mailto:jcgfoundation@yahoo.com" style="color: #7c3aed; font-size: 1.125rem; text-decoration: none;">
+                            jcgfoundation@yahoo.com
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHAT PAGE -->
+    <div id="chat" class="page">
+        <div class="hero">
+            <h1>Ask Us Anything</h1>
+            <p>Get answers about St. Anthony DLC, our programs, and how you can help</p>
+        </div>
+
+        <div class="container">
+            <div class="card">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-message bot">
+                            <div class="message-content">
+                                Hello! I'm here to answer your questions about Joy & Caregiving Foundation and St. Anthony Development and Learning Center. How can I help you today?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" id="chatInput" class="chat-input" placeholder="Type your question here..." onkeypress="handleKeyPress(event)">
+                        <button class="btn chat-send-btn" onclick="sendMessage()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="chat-disclaimer">Powered by AI. Answers are based on our knowledge base and may not cover all topics.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2026 Joy & Caregiving Foundation | 501(c)(3) Non-Profit Organization</p>
+        <p style="margin-top: 0.5rem;">Contact: <a href="mailto:jcgfoundation@yahoo.com">jcgfoundation@yahoo.com</a></p>
+    </footer>
+
+    <script>
+        function showPage(pageName) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            // Remove active class from all nav links
+            const navLinks = document.querySelectorAll('.nav-links a');
+            navLinks.forEach(link => link.classList.remove('active'));
+            
+            // Show selected page
+            document.getElementById(pageName).classList.add('active');
+            
+            // Add active class to current nav link
+            document.getElementById('nav-' + pageName).classList.add('active');
+            
+            // Close mobile menu
+            document.getElementById('navLinks').classList.remove('mobile-open');
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('navLinks').classList.toggle('mobile-open');
+        }
+
+        // Chat functionality
+        const API_URL = 'http://143.42.1.253:5000/chat';
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            // Add user message to chat
+            addMessage(message, 'user');
+            input.value = '';
+
+            // Show loading indicator
+            const loadingId = showLoading();
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ question: message })
+                });
+
+                const data = await response.json();
+
+                // Remove loading indicator
+                removeLoading(loadingId);
+
+                if (data.error) {
+                    addMessage('Sorry, I encountered an error. Please try again later.', 'bot');
+                } else {
+                    addMessage(data.answer, 'bot');
+                }
+            } catch (error) {
+                removeLoading(loadingId);
+                addMessage('Sorry, I could not connect to the server. Please make sure the chat server is running.', 'bot');
+            }
+        }
+
+        function addMessage(text, sender) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}`;
+            messageDiv.innerHTML = `<div class="message-content">${escapeHtml(text)}</div>`;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function showLoading() {
+            const messagesContainer = document.getElementById('chatMessages');
+            const loadingDiv = document.createElement('div');
+            const loadingId = 'loading-' + Date.now();
+            loadingDiv.id = loadingId;
+            loadingDiv.className = 'chat-message bot';
+            loadingDiv.innerHTML = `
+                <div class="message-content loading">
+                    <div class="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(loadingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            return loadingId;
+        }
+
+        function removeLoading(loadingId) {
+            const loadingDiv = document.getElementById(loadingId);
+            if (loadingDiv) {
+                loadingDiv.remove();
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
