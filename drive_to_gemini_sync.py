@@ -37,7 +37,7 @@ from googleapiclient.http import MediaIoBaseDownload
 from google import genai
 
 # === CONFIGURATION ===
-ENV_FILE_PATH = r'C:\Users\acgar\OneDrive\Documents\GoogleAI\.env'
+ENV_FILE_PATH = r'.//.env'
 
 # OAuth2 scopes - full drive access needed for move operations
 SCOPES = ['https://www.googleapis.com/auth/drive']

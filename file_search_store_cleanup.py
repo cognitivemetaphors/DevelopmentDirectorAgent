@@ -36,7 +36,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google import genai
 
 # === CONFIGURATION ===
-ENV_FILE_PATH = r'C:\Users\acgar\OneDrive\Documents\GoogleAI\.env'
+ENV_FILE_PATH = r'.//.env'
 
 # OAuth2 scopes for Gemini File Search
 SCOPES = [
