@@ -140,3 +140,48 @@ NOTES:
     - Uses REST API with force=true to delete documents with content/chunks
     - Logs to logs/cleanup_YYYYMMDD.log
     - Requires typing "DELETE ALL" to confirm (unless --force)
+
+chat_server.py
+==============
+
+Flask API server that provides a chat interface to query a Gemini File Search Store.
+Receives questions via HTTP POST and returns AI-generated answers based on uploaded documents.
+
+USAGE:
+    python chat_server.py [--port PORT]
+
+OPTIONS:
+    --port PORT     Server port (default: 5000)
+
+ENVIRONMENT (.env):
+    GEMINI_API_KEY        - Required. API key for Gemini
+    FILE_SEARCH_STORE_ID  - Required. File Search Store to query
+
+ENDPOINTS:
+    POST /chat      Send a question, receive an answer
+                    Request:  {"question": "What is St Anthony?"}
+                    Response: {"answer": "St Anthony is..."}
+
+    GET /health     Health check
+                    Response: {"status": "ok", "store_id": "..."}
+
+DEPENDENCIES:
+    pip install flask flask-cors google-genai python-dotenv
+
+EXAMPLES:
+    # Start server on default port 5000
+    python chat_server.py
+
+    # Start on custom port
+    python chat_server.py --port 8080
+
+    # Test with curl
+    curl -X POST http://localhost:5000/chat \
+         -H "Content-Type: application/json" \
+         -d '{"question": "Tell me about St Anthony"}'
+
+NOTES:
+    - Uses gemini-2.5-flash model with file_search tool
+    - CORS enabled for cross-origin requests from web frontend
+    - Designed to work with index.html chat page
+    - Server binds to 0.0.0.0 (accessible from network)
