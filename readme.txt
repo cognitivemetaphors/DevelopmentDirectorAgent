@@ -1,47 +1,60 @@
 
-gmail_savepdfs_to_gdrive.py
-===========================
+gmail_saveattachments_to_gdrive.py
+==================================
 
-Extracts PDF attachments from Gmail emails and uploads them to Google Drive.
-Searches for unread emails from a specific sender with a specific subject,
-extracts PDFs, uploads to Drive, and labels processed emails.
+Description:
+    Monitors Gmail for unread emails from a specific sender with a specific 
+    subject keyword, downloads matching attachments, uploads them to Google 
+    Drive, and labels the processed emails.
 
-USAGE:
-    python gmail_savepdfs_to_gdrive.py
+Usage:
+    python gmail_saveattachments_to_gdrive.py
 
-ENVIRONMENT (.env):
-    SENDER_EMAIL      - Email address to filter by (e.g., sender@example.com)
-    SUBJECT_KEYWORD   - Subject line keyword to search for
-    DRIVE_FOLDER_ID   - Google Drive folder ID to upload PDFs to
-    GMAIL_LABEL       - Gmail label to apply to processed emails
+Environment Variables (in .env):
+    SENDER_EMAIL      - Email address to filter messages from
+    SUBJECT_KEYWORD   - Keyword that must appear in the subject line
+    DRIVE_FOLDER_ID   - Google Drive folder ID for uploaded files
+    GMAIL_LABEL       - Label to apply to processed emails (default: StAnthonys)
+    FILE_EXTENSIONS   - Comma-separated list of file extensions to process
+                        (default: pdf). Example: pdf,docx,xlsx,pptx,txt
     TOKEN_FILE        - Path to OAuth token cache (token.pickle)
     CREDENTIALS_FILE  - Path to OAuth credentials JSON
 
-WORKFLOW:
-    1. Search Gmail for unread emails matching:
-       from:{SENDER_EMAIL} subject:"{SUBJECT_KEYWORD}" is:unread
-    2. Extract PDF attachments from matching emails
-    3. Upload PDFs to Google Drive folder
-    4. Create/apply Gmail label to processed emails
-    5. Report summary of processed files
+Workflow:
+    1. Searches Gmail for unread emails matching sender and subject criteria
+    2. For each matching email:
+       - Downloads attachments with configured file extensions
+       - Uploads files to the specified Google Drive folder
+       - Applies a Gmail label to mark the email as processed
+    3. Displays summary of processed emails and uploaded files
 
-OAUTH SCOPES:
-    - gmail.readonly   - Read email messages
-    - gmail.modify     - Apply labels to emails
-    - drive.file       - Upload files to Drive
+Features:
+    - Configurable file type filtering via FILE_EXTENSIONS in .env
+    - OAuth2 authentication with automatic token refresh
+    - Creates Gmail labels automatically if they don't exist
+    - Supports multiple file types: pdf, docx, xlsx, pptx, txt, csv, html,
+      doc, xls, ppt, jpg, jpeg, png, gif
+    - Detailed progress output with file sizes and Drive links
 
-EXAMPLES:
-    # First run - will open browser for OAuth consent
-    python gmail_savepdfs_to_gdrive.py
+Requirements:
+    - google-auth
+    - google-auth-oauthlib
+    - google-api-python-client
+    - python-dotenv
 
-    # Subsequent runs use cached token
-    python gmail_savepdfs_to_gdrive.py
+OAuth Scopes:
+    - gmail.readonly (read emails)
+    - gmail.modify (apply labels)
+    - drive.file (upload files)
 
-NOTES:
-    - Only processes PDF attachments (*.pdf)
-    - Creates template .env file if missing
-    - OAuth token cached in token.pickle for reuse
-    - Emails are marked with label after processing (not deleted)
+Example .env Configuration:
+    SENDER_EMAIL=reports@company.com
+    SUBJECT_KEYWORD=Monthly Report
+    DRIVE_FOLDER_ID=1ABC123def456
+    GMAIL_LABEL=ProcessedReports
+    FILE_EXTENSIONS=pdf,docx,xlsx
+    TOKEN_FILE=C:\path\to\token.pickle
+    CREDENTIALS_FILE=C:\path\to\credentials.json
 
 File: drive_to_gemini_sync.py
 ==============================
