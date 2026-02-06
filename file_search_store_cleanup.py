@@ -2,18 +2,20 @@
 """
 File Search Store Cleanup Tool
 
-Deletes all documents from a specified Gemini File Search Store using OAuth authentication.
+Deletes documents from a specified Gemini File Search Store using OAuth authentication.
 
 Usage:
-    python file_search_store_cleanup.py <store_id> [--dry-run] [--force]
+    python file_search_store_cleanup.py <store_id> [--dry-run] [--force] [--files INDICES]
 
 Arguments:
     store_id    The File Search Store ID (e.g., fileSearchStores/mystore-abc123)
 
 Options:
-    --dry-run   List files without deleting
-    --force     Skip confirmation prompt
-    --verbose   Enable debug logging
+    --dry-run       List files without deleting
+    --force         Skip confirmation prompt
+    --files INDICES Comma-separated list of document numbers to delete (e.g., 1,3,5)
+                    If omitted, deletes ALL documents
+    --verbose       Enable debug logging
 
 Environment Variables (in .env):
     TOKEN_FILE        - Path to OAuth token cache
@@ -51,7 +53,7 @@ logger = logging.getLogger(__name__)
 def parse_arguments():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description='Delete all documents from a Gemini File Search Store'
+        description='Delete documents from a Gemini File Search Store'
     )
     parser.add_argument(
         'store_id',
@@ -66,6 +68,11 @@ def parse_arguments():
         '--force',
         action='store_true',
         help='Skip confirmation prompt'
+    )
+    parser.add_argument(
+        '--files',
+        type=str,
+        help='Comma-separated list of document numbers to delete (e.g., 1,3,5). If omitted, deletes all documents.'
     )
     parser.add_argument(
         '--verbose', '-v',
@@ -171,16 +178,40 @@ def delete_document_with_force(api_key, doc_name):
         return False, response.text
 
 
-def confirm_deletion(store_id, file_count):
+def confirm_deletion(store_id, file_count, delete_all=True):
     """Ask user to confirm deletion."""
     print('\n' + '!' * 60)
-    print('WARNING: This will DELETE ALL DOCUMENTS from:')
-    print(f'  Store: {store_id}')
-    print(f'  Total documents: {file_count}')
+    if delete_all:
+        print('WARNING: This will DELETE ALL DOCUMENTS from:')
+        print(f'  Store: {store_id}')
+        print(f'  Total documents: {file_count}')
+        confirmation_text = "DELETE ALL"
+    else:
+        confirmation_text = "DELETE"
+        print('WARNING: This will DELETE the selected documents from:')
+        print(f'  Store: {store_id}')
+        print(f'  Documents to delete: {file_count}')
     print('!' * 60)
 
-    response = input('\nType "DELETE ALL" to confirm (or anything else to cancel): ')
-    return response == "DELETE ALL"
+    response = input(f'\nType "{confirmation_text}" to confirm (or anything else to cancel): ')
+    return response == confirmation_text
+
+
+def parse_file_indices(files_arg, max_index):
+    """Parse comma-separated file indices and validate them."""
+    try:
+        indices = []
+        parts = files_arg.split(',')
+        for part in parts:
+            idx = int(part.strip())
+            if idx < 1 or idx > max_index:
+                print(f'Error: Document number {idx} is out of range (1-{max_index})')
+                return None
+            indices.append(idx)
+        return sorted(list(set(indices)))  # Remove duplicates and sort
+    except ValueError:
+        print('Error: Invalid file indices. Use comma-separated numbers (e.g., 1,3,5)')
+        return None
 
 
 def main():
@@ -260,14 +291,28 @@ def main():
     print('-' * 90)
     print(f'Total: {len(documents)} document(s)\n')
 
+    # Determine which documents to delete
+    delete_all = not args.files
+    documents_to_delete = []
+
+    if delete_all:
+        documents_to_delete = list(range(len(documents)))
+        deletion_mode = 'all documents'
+    else:
+        indices = parse_file_indices(args.files, len(documents))
+        if indices is None:
+            return 1
+        documents_to_delete = [idx - 1 for idx in indices]  # Convert to 0-based indices
+        deletion_mode = f'{len(documents_to_delete)} selected document(s)'
+
     # Dry run - stop here
     if args.dry_run:
-        logger.info('[DRY-RUN] Would delete all documents listed above')
+        logger.info(f'[DRY-RUN] Would delete {deletion_mode}')
         return 0
 
     # Confirm deletion
     if not args.force:
-        if not confirm_deletion(store_id, len(documents)):
+        if not confirm_deletion(store_id, len(documents_to_delete), delete_all=delete_all):
             logger.info('Deletion cancelled by user')
             return 0
 
@@ -279,24 +324,27 @@ def main():
 
     api_key = os.getenv('GEMINI_API_KEY')
 
-    for i, doc in enumerate(documents, 1):
+    for counter, doc_idx in enumerate(documents_to_delete, 1):
+        doc = documents[doc_idx]
         info = get_file_info(doc)
 
         success, error = delete_document_with_force(api_key, info['full_name'])
 
         if success:
             deleted += 1
-            logger.info(f'[{i}/{len(documents)}] Deleted: {info["display_name"]} (ID: {info["doc_id"]})')
+            logger.info(f'[{counter}/{len(documents_to_delete)}] Deleted: {info["display_name"]} (ID: {info["doc_id"]})')
         else:
             failed += 1
-            logger.error(f'[{i}/{len(documents)}] Failed: {info["display_name"]} - {error}')
+            logger.error(f'[{counter}/{len(documents_to_delete)}] Failed: {info["display_name"]} - {error}')
 
     # Summary
     logger.info('=' * 60)
     logger.info('=== Cleanup Summary ===')
+    logger.info(f'Total documents in store: {len(documents)}')
     logger.info(f'Documents deleted: {deleted}')
     logger.info(f'Documents failed: {failed}')
     logger.info(f'Store: {store_id}')
+    logger.info(f'Deletion mode: {"All documents" if delete_all else "Selected documents"}')
 
     if failed > 0:
         logger.warning('Completed with errors')

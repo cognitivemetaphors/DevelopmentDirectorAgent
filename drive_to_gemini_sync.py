@@ -48,6 +48,7 @@ SUPPORTED_MIME_TYPES = {
     'text/plain': '.txt',
     'text/html': '.html',
     'text/csv': '.csv',
+    'application/json': '.json',
     'application/vnd.google-apps.document': '.gdoc',  # Export as PDF
     'application/vnd.google-apps.spreadsheet': '.gsheet',  # Export as CSV
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',

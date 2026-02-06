@@ -10,7 +10,7 @@ from googleapiclient.http import MediaInMemoryUpload
 
 # Load environment variables from .env file
 # Specify the path to your .env file here
-ENV_FILE_PATH = r'C:\Users\acgar\OneDrive\Documents\GoogleAI\.env'
+ENV_FILE_PATH = r'.//.env'
 
 if not os.path.exists(ENV_FILE_PATH):
     print(f'✗ Error: .env file not found at: {ENV_FILE_PATH}')

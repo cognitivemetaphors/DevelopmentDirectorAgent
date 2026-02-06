@@ -1,0 +1,7 @@
+2026-02-01 01:58:00 - INFO - File Search Store Cleanup 
+2026-02-01 01:58:00 - INFO - ============================================================
+2026-02-01 01:58:00 - INFO - Target Store: fileSearchStores/stanthonyrag-cehk1qjp1dna
+2026-02-01 01:58:00 - INFO - [1/4] Authenticating with OAuth2...
+2026-02-01 01:58:00 - INFO - Refreshing expired OAuth token...
+2026-02-01 01:58:00 - DEBUG - Starting new HTTPS connection (1): oauth2.googleapis.com:443
+2026-02-01 01:58:00 - DEBUG - https://oauth2.googleapis.com:443 "POST /token HTTP/1.1" 400 None
