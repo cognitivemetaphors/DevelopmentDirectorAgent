@@ -1,4 +1,5 @@
 .env
 token.pickle
 credentials.json
+logs
 __pycache__/
