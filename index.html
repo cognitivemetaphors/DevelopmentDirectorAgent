@@ -548,6 +548,46 @@
                 <button class="btn" onclick="showPage('projects')" style="margin-right: 1rem; margin-bottom: 1rem;">View Our Projects</button>
                 <button class="btn btn-secondary" onclick="showPage('donate')" style="margin-bottom: 1rem;">Support Our Mission</button>
             </div>
+
+            <!-- FEATURE STORY SECTION -->
+            <div class="card" id="featureStoryContainer" style="display: none; margin-top: 3rem;">
+                <h1 id="storyTitle" style="color: #7c3aed; margin-bottom: 1.5rem;"></h1>
+
+                <div style="background: #f7fafc; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                    <p id="storyDescription" style="color: #4a5568; line-height: 1.8;"></p>
+                </div>
+
+                <div id="storyHashtags" style="margin-bottom: 1.5rem;">
+                    <!-- Hashtags will be inserted here -->
+                </div>
+
+                <div id="videoContainer" style="margin: 2rem 0; aspect-ratio: 16/9; overflow: hidden; border-radius: 0.5rem;">
+                    <iframe id="youtubeFrame"
+                            style="width: 100%; height: 100%; border: none;"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                    </iframe>
+                </div>
+
+                <button class="btn" onclick="showPage('donate')" style="margin-top: 1rem;">Support This Initiative</button>
+            </div>
+
+            <!-- LOADING STATE -->
+            <div id="storyLoadingContainer" style="display: none; text-align: center; padding: 2rem; margin-top: 3rem;">
+                <div class="typing-indicator" style="justify-content: center;">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <p style="margin-top: 1rem; color: #718096;">Loading feature story...</p>
+            </div>
+
+            <!-- ERROR STATE -->
+            <div id="storyErrorContainer" style="display: none; margin-top: 3rem;">
+                <div class="alert-box">
+                    <p id="storyErrorMessage"></p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -941,6 +981,113 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        // Feature Story Functionality
+        const FEATURE_STORY_API = 'http://143.42.1.253:5000/feature-story';
+        // Optional: Set a specific indexname to display (leave empty to show first story)
+        const FEATURED_STORY_INDEXNAME = 'feature001';  // Change this to any other indexname
+
+        // Load feature story when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFeatureStory();
+        });
+
+        async function loadFeatureStory() {
+            // Show loading state
+            showElement('storyLoadingContainer', true);
+            hideElement('featureStoryContainer');
+            hideElement('storyErrorContainer');
+
+            try {
+                // Build API URL with optional indexname parameter
+                let apiUrl = FEATURE_STORY_API;
+                if (FEATURED_STORY_INDEXNAME) {
+                    apiUrl += `?indexname=${encodeURIComponent(FEATURED_STORY_INDEXNAME)}`;
+                }
+
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load feature story');
+                }
+
+                // Populate story data
+                displayFeatureStory(data);
+
+                // Show story container
+                hideElement('storyLoadingContainer');
+                showElement('featureStoryContainer', true);
+
+            } catch (error) {
+                console.error('Error loading feature story:', error);
+                showError(error.message);
+                hideElement('storyLoadingContainer');
+                showElement('storyErrorContainer', true);
+            }
+        }
+
+        function displayFeatureStory(story) {
+            // Set title
+            const titleElement = document.getElementById('storyTitle');
+            titleElement.textContent = story.title || 'Feature Story';
+
+            // Set description
+            const descElement = document.getElementById('storyDescription');
+            descElement.textContent = story.description || '';
+
+            // Set hashtags
+            const hashtagsContainer = document.getElementById('storyHashtags');
+            hashtagsContainer.innerHTML = '';
+
+            if (story.hashtags && Array.isArray(story.hashtags)) {
+                const hashtagsHtml = story.hashtags
+                    .map(tag => `<span style="display: inline-block; background: #e9d5ff; color: #7c3aed; padding: 0.5rem 1rem; border-radius: 2rem; margin-right: 0.5rem; margin-bottom: 0.5rem; font-weight: 500;">#${tag}</span>`)
+                    .join('');
+                hashtagsContainer.innerHTML = hashtagsHtml;
+            }
+
+            // Set YouTube video
+            if (story.youtube_link) {
+                const videoId = extractYouTubeId(story.youtube_link);
+                if (videoId) {
+                    const youtubeFrame = document.getElementById('youtubeFrame');
+                    youtubeFrame.src = `https://www.youtube.com/embed/${videoId}`;
+                }
+            }
+        }
+
+        function extractYouTubeId(url) {
+            // Extract YouTube video ID from various URL formats
+            let videoId = null;
+
+            if (url.includes('youtu.be/')) {
+                videoId = url.split('youtu.be/')[1]?.split('?')[0];
+            } else if (url.includes('youtube.com/watch')) {
+                const params = new URLSearchParams(url.split('?')[1]);
+                videoId = params.get('v');
+            } else if (url.includes('youtube.com/embed/')) {
+                videoId = url.split('youtube.com/embed/')[1]?.split('?')[0];
+            }
+
+            return videoId;
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('storyErrorMessage');
+            errorElement.textContent = `Unable to load feature story: ${message}`;
+        }
+
+        function showElement(id, show = true) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.style.display = show ? 'block' : 'none';
+            }
+        }
+
+        function hideElement(id) {
+            showElement(id, false);
         }
     </script>
 </body>
