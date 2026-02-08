@@ -621,44 +621,833 @@ Tips for success:
 chat_server.py
 ==============
 
-Flask API server that provides a chat interface to query a Gemini File Search Store.
-Receives questions via HTTP POST and returns AI-generated answers based on uploaded documents.
+================================================================================
+                          CHAT SERVER - README
+================================================================================
 
-USAGE:
-    python chat_server.py [--port PORT]
+PROJECT: Joy & Caregiving Foundation
+PURPOSE: Flask-based API server for chat and feature story management
+VERSION: 2.0
 
-OPTIONS:
-    --port PORT     Server port (default: 5000)
+================================================================================
+OVERVIEW
+================================================================================
 
-ENVIRONMENT (.env):
-    GEMINI_API_KEY        - Required. API key for Gemini
-    FILE_SEARCH_STORE_ID  - Required. File Search Store to query
+chat_server.py is a Flask REST API that provides two main functions:
 
-ENDPOINTS:
-    POST /chat      Send a question, receive an answer
-                    Request:  {"question": "What is St Anthony?"}
-                    Response: {"answer": "St Anthony is..."}
+1. CHAT ENDPOINT - Query Gemini AI using File Search Store
+   - Accepts natural language questions
+   - Searches uploaded documents for answers
+   - Returns AI-generated responses
 
-    GET /health     Health check
-                    Response: {"status": "ok", "store_id": "..."}
+2. FEATURE STORY ENDPOINT - Load and serve feature content
+   - Reads JSON files from local data directory
+   - Returns formatted feature story data
+   - Supports dynamic feature selection via indexname
 
-DEPENDENCIES:
-    pip install flask flask-cors google-genai python-dotenv
+The server automatically reloads environment variables before each request,
+allowing configuration changes without server restart.
 
-EXAMPLES:
-    # Start server on default port 5000
-    python chat_server.py
+================================================================================
+INSTALLATION & SETUP
+================================================================================
 
-    # Start on custom port
-    python chat_server.py --port 8080
+1. INSTALL DEPENDENCIES:
+   pip install flask flask-cors python-dotenv google-genai
 
-    # Test with curl
-    curl -X POST http://localhost:5000/chat \
-         -H "Content-Type: application/json" \
-         -d '{"question": "Tell me about St Anthony"}'
+2. CREATE .ENV FILE (in developmentdirectoragent/ directory):
+   GEMINI_API_KEY=your_api_key_here
+   FILE_SEARCH_STORE_ID=your_store_id_here
+   FEATURED_STORY_INDEXNAME=feature001
 
-NOTES:
-    - Uses gemini-2.5-flash model with file_search tool
-    - CORS enabled for cross-origin requests from web frontend
-    - Designed to work with index.html chat page
-    - Server binds to 0.0.0.0 (accessible from network)
+3. CREATE DATA DIRECTORY:
+   mkdir -p /var/www/joyandcaregiving/data
+
+4. ADD JSON FEATURE FILES:
+   Place JSON files in the data directory:
+   - Option A: Individual files (feature001.json, feature002.json, etc.)
+   - Option B: Single features.json with array of features
+
+   JSON Format:
+   {
+     "indexname": "feature001",
+     "title": "Feature Title",
+     "description": "Feature description text",
+     "hashtags": ["tag1", "tag2"] OR "tag1, tag2",
+     "image_link": "filename.jpg" or null,
+     "youtube_link": "https://youtube.com/watch?v=..." or null
+   }
+
+================================================================================
+RUNNING THE SERVER
+================================================================================
+
+COMMAND LINE:
+   python chat_server.py --port 5000
+
+DEFAULT PORT: 5000
+
+SYSTEMD SERVICE (if installed):
+   sudo systemctl start chat-server
+   sudo systemctl restart chat-server
+   sudo systemctl status chat-server
+
+VIEW LOGS:
+   journalctl -u chat-server -f
+
+================================================================================
+API ENDPOINTS
+================================================================================
+
+1. POST /chat
+   Purpose: Ask questions, get AI responses from documents
+
+   Request:
+   {
+     "question": "What is the mission of Joy & Caregiving Foundation?"
+   }
+
+   Response:
+   {
+     "answer": "The foundation's mission is to..."
+   }
+
+2. GET /feature-story
+   Purpose: Get feature story data by indexname
+
+   Parameters:
+   - indexname (optional): Which feature to load
+                          Uses FEATURED_STORY_INDEXNAME from .env if not provided
+
+   Example: GET /feature-story?indexname=feature001
+
+   Response:
+   {
+     "indexname": "feature001",
+     "title": "Feature Title",
+     "description": "Description text",
+     "hashtags": ["tag1", "tag2"],
+     "image_link": "filename.jpg",
+     "youtube_link": "https://youtube.com/watch?v=..."
+   }
+
+   Errors:
+   - 400: No indexname specified and FEATURED_STORY_INDEXNAME not in .env
+   - 404: Specified feature not found in data directory
+
+3. GET /config
+   Purpose: Get frontend configuration
+
+   Response:
+   {
+     "featured_story_indexname": "feature001"
+   }
+
+4. GET /health
+   Purpose: Health check endpoint
+
+   Response:
+   {
+     "status": "ok",
+     "store_id": "your_store_id"
+   }
+
+5. GET /test-gemini
+   Purpose: Test Gemini API connectivity
+
+   Response:
+   {
+     "status": "success",
+     "message": "Gemini API is working",
+     "response": "Hello, testing Gemini API"
+   }
+
+================================================================================
+ENVIRONMENT VARIABLES
+================================================================================
+
+GEMINI_API_KEY (required)
+   - Your Gemini API key from Google Cloud
+   - Used to authenticate with Gemini AI
+
+FILE_SEARCH_STORE_ID (required)
+   - ID of your File Search Store in Gemini
+   - Contains documents used by /chat endpoint
+
+FEATURED_STORY_INDEXNAME (optional)
+   - Default feature to load on /feature-story if no indexname parameter
+   - Example: "feature001"
+   - Can be changed in .env file without restarting server
+
+NOTE: Environment variables are automatically reloaded before each request,
+so changes to .env take effect immediately without server restart.
+
+================================================================================
+FILE STRUCTURE
+================================================================================
+
+/var/www/joyandcaregiving/
+├── chat_server.py              ← Main server file
+├── public/
+│   ├── index.html              ← Frontend HTML
+│   ├── images/                 ← Feature story images
+│   │   ├── children_jollibee.jpg
+│   │   └── [other images]
+│   └── [other static files]
+├── data/                        ← Feature story JSON files
+│   ├── feature001.json
+│   ├── feature002.json
+│   └── features.json (optional)
+├── developmentdirectoragent/
+│   └── .env                    ← Configuration file
+└── logs/                        ← Log files (if configured)
+
+================================================================================
+FEATURE STORY DATA LOADING
+================================================================================
+
+The /feature-story endpoint loads JSON data in this order:
+
+1. Checks for individual feature file:
+   /var/www/joyandcaregiving/data/{indexname}.json
+
+2. If not found, checks features.json for array or nested structure:
+   /var/www/joyandcaregiving/data/features.json
+
+3. Handles nested social_media_post structure:
+   If data has "social_media_post" object, extracts values to root level
+
+4. Returns clean, flat JSON with all fields available
+
+================================================================================
+LOGGING
+================================================================================
+
+LOG LEVEL: INFO
+
+Logs are sent to console and can be viewed via:
+- Local: stdout/stderr
+- Systemd: journalctl -u chat-server
+
+Log entries include:
+- Configuration reloads
+- Feature story loads
+- API errors
+- Gemini API responses and errors
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+ISSUE: Feature story shows blank/no content
+SOLUTION:
+- Check browser console (F12) for JavaScript errors
+- Verify /feature-story endpoint returns data
+- Check that .env file has FEATURED_STORY_INDEXNAME set
+- Verify data directory and JSON files exist
+
+ISSUE: "Missing GEMINI_API_KEY" on startup
+SOLUTION:
+- Check .env file exists in developmentdirectoragent/ directory
+- Verify GEMINI_API_KEY and FILE_SEARCH_STORE_ID are set
+- Server will not start without these values
+
+ISSUE: /chat endpoint returns empty response
+SOLUTION:
+- Verify File Search Store ID is correct
+- Check that documents were uploaded to File Search Store
+- Try /test-gemini endpoint to verify Gemini API is working
+
+ISSUE: Feature not found (404 error)
+SOLUTION:
+- Verify JSON file exists in /var/www/joyandcaregiving/data/
+- Check that indexname matches the JSON filename or "indexname" field
+- Verify JSON format is valid
+
+ISSUE: Images not showing in feature story
+SOLUTION:
+- Verify image files exist in /var/www/joyandcaregiving/public/images/
+- Check that image_link in JSON matches actual filename
+
+================================================================================
+DEPLOYMENT & MAINTENANCE
+================================================================================
+
+CONFIGURATION CHANGES:
+   - Edit .env file with new values
+   - Changes take effect automatically on next request
+   - No server restart required
+
+FEATURE UPDATES:
+   - Update JSON files in /data directory
+   - Changes available immediately on next API call
+
+CODE UPDATES:
+   - Update chat_server.py file
+   - Restart server: sudo systemctl restart chat-server
+
+================================================================================
+VERSION HISTORY
+================================================================================
+
+v2.0 - Current
+- Replaced Gemini-based feature story with local JSON file reading
+- Added automatic .env reloading before each request
+- Support for nested social_media_post structure
+- Improved hashtags handling (string and array support)
+
+v1.0 - Initial release
+- Chat endpoint with Gemini File Search
+- Feature story endpoint with Gemini extraction
+
+================================================================================
+
+index.html
+==========
+
+================================================================================
+                    INDEX.HTML - FRONTEND DOCUMENTATION
+================================================================================
+
+PROJECT: Joy & Caregiving Foundation Website
+PURPOSE: Landing page with dynamic feature story display
+VERSION: 2.0
+
+================================================================================
+OVERVIEW
+================================================================================
+
+index.html is the main landing page for the Joy & Caregiving Foundation website.
+It provides:
+
+1. RESPONSIVE DESIGN
+   - Mobile-friendly layout
+   - Works on all screen sizes (desktop, tablet, mobile)
+   - Sticky navigation header
+
+2. FEATURE STORY SECTION
+   - Displays dynamic content from the backend API
+   - Shows title, description, hashtags
+   - Supports image and YouTube video display
+   - Automatically loads from /feature-story endpoint
+
+3. NAVIGATION & SECTIONS
+   - Multiple page sections (Home, About, Programs, Donate, Contact)
+   - Smooth scrolling between sections
+   - Mobile menu with hamburger icon
+
+4. CALL-TO-ACTION
+   - Donation button
+   - Contact information
+   - Email subscription option
+
+================================================================================
+FILE LOCATION
+================================================================================
+
+/var/www/joyandcaregiving/public/index.html
+
+This file must be served by a web server (nginx, Apache, etc.) or accessed
+via http://143.42.1.253/ in a browser.
+
+================================================================================
+DEPENDENCIES
+================================================================================
+
+BACKEND API:
+- /config endpoint
+  Returns: {"featured_story_indexname": "feature001"}
+
+- /feature-story endpoint
+  Returns: {
+    "indexname": "...",
+    "title": "...",
+    "description": "...",
+    "hashtags": [...],
+    "image_link": "...",
+    "youtube_link": "..."
+  }
+
+EXTERNAL LIBRARIES:
+- None (uses vanilla JavaScript, CSS, and HTML)
+- No jQuery, Bootstrap, or other frameworks required
+
+================================================================================
+PAGE STRUCTURE
+================================================================================
+
+HEADER / NAVIGATION
+- Logo and site title
+- Navigation links (Home, About, Programs, Donate, Contact)
+- Mobile menu button (hamburger icon)
+- Sticky positioning (stays at top when scrolling)
+
+HERO SECTION
+- Large banner with organization mission statement
+- Call-to-action buttons
+- Background styling
+
+ABOUT SECTION
+- Description of organization
+- Mission statement
+- Statistics or key information
+
+FEATURE STORY SECTION (Dynamic)
+- Title: From API
+- Description: From API
+- Image: From /public/images/ directory (if available)
+- Hashtags: From API (displayed as tags)
+- YouTube Video: From API (embedded iframe)
+- Loading indicator while fetching data
+- Error message if API fails
+
+PROGRAMS SECTION
+- Description of programs offered
+- Program cards/details
+
+DONATE SECTION
+- Donation information
+- Donation button/link
+- Payment methods accepted
+
+CONTACT SECTION
+- Contact form
+- Email address: jcgfoundation@yahoo.com
+- Location information
+- Social media links
+
+FOOTER
+- Copyright information
+- Links
+- Contact information
+
+================================================================================
+FEATURE STORY FUNCTIONALITY
+================================================================================
+
+HOW IT WORKS:
+
+1. PAGE LOADS
+   - index.html loads in browser
+   - JavaScript initializes
+
+2. FETCH CONFIGURATION
+   - JavaScript calls /config endpoint
+   - Retrieves FEATURED_STORY_INDEXNAME from backend
+   - Example: Returns "feature001"
+
+3. LOAD FEATURE STORY
+   - JavaScript calls /feature-story?indexname=feature001
+   - Shows loading indicator while fetching
+
+4. PROCESS RESPONSE
+   - Parse JSON response from API
+   - Extract: title, description, hashtags, image_link, youtube_link
+
+5. DISPLAY CONTENT
+   - Set title in HTML
+   - Display description as text
+   - If image_link exists: display image from /public/images/
+   - If hashtags exist: display as styled tags
+   - If youtube_link exists: extract video ID and embed YouTube player
+
+6. ERROR HANDLING
+   - If API fails: show error message
+   - If image fails to load: hide image container
+   - If YouTube video unavailable: hide video container
+
+================================================================================
+HASHTAGS PROCESSING
+================================================================================
+
+The JavaScript handles hashtags in two formats:
+
+STRING FORMAT (comma-separated):
+Input: "tag1, tag2, tag3"
+Processing: Split by comma, trim whitespace, remove # prefix
+Output: Displayed as individual styled tags
+
+ARRAY FORMAT:
+Input: ["tag1", "tag2", "tag3"]
+Processing: Map over array, remove # prefix
+Output: Displayed as individual styled tags
+
+DISPLAY:
+Each hashtag appears as a purple rounded tag with # prefix:
+  #EducationForAll  #StAnthonyDLC  #CommunityDevelopment
+
+================================================================================
+IMAGE HANDLING
+================================================================================
+
+IMAGE SOURCE:
+- Images stored in: /var/www/joyandcaregiving/public/images/
+- Filename referenced in JSON: "children_jollibee.jpg"
+- Full path: /public/images/children_jollibee.jpg
+
+SUPPORTED FORMATS:
+- .jpg, .jpeg
+- .png
+- .gif
+- .webp
+
+IMAGE CONFIGURATION:
+- Responsive sizing: scales with container
+- Border radius: rounded corners
+- Error handling: if image fails to load, container is hidden
+
+FALLBACK BEHAVIOR:
+- If image_link is null or missing: image container is hidden
+- If image fails to load: error listener hides container
+- Page continues to display other content
+
+================================================================================
+YOUTUBE VIDEO HANDLING
+================================================================================
+
+SUPPORTED URL FORMATS:
+1. Standard: https://www.youtube.com/watch?v=VIDEO_ID
+2. Short: https://youtu.be/VIDEO_ID
+3. Embed: https://www.youtube.com/embed/VIDEO_ID
+
+VIDEO ID EXTRACTION:
+JavaScript extracts the video ID from any format and constructs embed URL:
+  https://www.youtube.com/embed/{VIDEO_ID}
+
+EMBEDDING:
+- Uses iframe for secure embedding
+- Aspect ratio: 16:9 (widescreen)
+- Responsive: scales with container
+- Features: play controls, fullscreen option
+
+FALLBACK BEHAVIOR:
+- If youtube_link is null or missing: video container is hidden
+- If video ID cannot be extracted: video container is hidden
+- Page continues to display other content
+
+================================================================================
+STYLING & DESIGN
+================================================================================
+
+COLOR SCHEME:
+- Primary Purple: #7c3aed
+- Secondary Purple: #6b21a8
+- Text: #333
+- Light backgrounds: #f7fafc
+- Tag background: #e9d5ff
+
+FONTS:
+- System fonts (Apple, Windows, Linux defaults)
+- Fallback chain: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto
+
+RESPONSIVE BREAKPOINTS:
+- Desktop: 1200px max-width container
+- Tablet: Responsive padding and layouts
+- Mobile: Single column, full-width elements
+
+STYLING FEATURES:
+- Shadows for depth
+- Gradients for visual interest
+- Border radius for modern look
+- Smooth transitions and hover effects
+- Box-shadow on cards and containers
+
+================================================================================
+CUSTOMIZATION
+================================================================================
+
+CHANGE FEATURE STORY:
+1. Edit .env file: FEATURED_STORY_INDEXNAME=feature002
+2. Restart server: sudo systemctl restart chat-server
+3. Reload page: F5 or Ctrl+R
+
+CHANGE COLORS:
+1. Edit index.html CSS section (look for hex color codes)
+2. Find color like #7c3aed (purple)
+3. Replace with desired color
+4. Save and reload page
+
+CHANGE SITE TITLE:
+1. Find <title> tag at top of HTML
+2. Change text between <title> tags
+3. Change <h1 id="site-title"> text in header
+
+CHANGE LOGO:
+1. Replace logo image in /var/www/joyandcaregiving/public/
+2. Update <img src="logo.png"> path in HTML
+3. Adjust width/height in CSS if needed
+
+ADD NEW SECTIONS:
+1. Create new <section> element with unique ID
+2. Add navigation link in header
+3. Add CSS styling in <style> section
+4. Update scroll-to-section JavaScript if needed
+
+================================================================================
+JAVASCRIPT FUNCTIONS
+================================================================================
+
+fetchConfig()
+- Purpose: Load configuration from /config endpoint
+- Updates: FEATURED_STORY_INDEXNAME global variable
+- Called: On page load
+
+loadFeatureStory()
+- Purpose: Fetch feature story data from /feature-story endpoint
+- Shows: Loading indicator
+- Calls: displayFeatureStory() on success
+- Handles: Errors and displays error message
+
+displayFeatureStory(story)
+- Purpose: Render feature story data to HTML
+- Updates: Title, description, hashtags, image, video
+- Handles: Different data formats (string/array hashtags)
+- Error handling: Missing fields and failed image loads
+
+extractYouTubeId(url)
+- Purpose: Extract video ID from YouTube URL
+- Supports: Multiple YouTube URL formats
+- Returns: Video ID or null
+
+showElement(id, visible)
+- Purpose: Toggle element visibility
+- Parameters: Element ID and visibility boolean
+
+hideElement(id)
+- Purpose: Hide element
+- Parameters: Element ID
+
+showError(message)
+- Purpose: Display error message
+- Parameters: Error text to display
+
+================================================================================
+ERROR MESSAGES
+================================================================================
+
+LOADING FEATURE STORY...
+- Normal state during initial API call
+- Shows while waiting for data
+
+Unable to load feature story: {error message}
+- API endpoint returned error
+- Feature not found (404)
+- API is down
+- Network error
+
+Check browser console (F12) for detailed error information
+
+================================================================================
+BROWSER COMPATIBILITY
+================================================================================
+
+TESTED ON:
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
+
+REQUIRES:
+- JavaScript enabled
+- Fetch API support
+- ES6+ JavaScript features
+
+MOBILE:
+- iOS Safari 12+
+- Android Chrome
+- Mobile Firefox
+
+================================================================================
+LOADING STATE
+================================================================================
+
+BEFORE API RESPONSE:
+- Show: storyLoadingContainer (spinning loader)
+- Hide: featureStoryContainer, storyErrorContainer
+
+ON SUCCESS:
+- Hide: storyLoadingContainer
+- Show: featureStoryContainer with data
+
+ON ERROR:
+- Hide: storyLoadingContainer
+- Show: storyErrorContainer with error message
+
+================================================================================
+PERFORMANCE CONSIDERATIONS
+================================================================================
+
+PAGE LOAD TIME:
+- HTML parsing: ~10-50ms
+- CSS rendering: ~20-100ms
+- JavaScript execution: ~10-50ms
+- API fetch: 100-500ms (network dependent)
+- Total: ~150-700ms (varies by network)
+
+OPTIMIZATION TIPS:
+1. Cache API responses in browser
+2. Lazy load images
+3. Minify CSS/JavaScript for production
+4. Use CDN for static files
+5. Enable gzip compression on server
+
+NETWORK REQUESTS:
+- 1 request to /config
+- 1 request to /feature-story
+- Multiple requests for images (if displayed)
+- 1 request for each YouTube video (embedded from youtube.com)
+
+================================================================================
+DEBUGGING
+================================================================================
+
+OPEN DEVELOPER TOOLS: F12 or right-click → Inspect
+
+CONSOLE TAB:
+- Look for JavaScript errors (red text)
+- Look for warnings (yellow text)
+- Check for network request errors
+
+NETWORK TAB:
+- Click /config request to see response
+- Click /feature-story request to see response
+- Check status codes (200 = success, 404 = not found, 500 = error)
+
+ELEMENTS TAB:
+- Inspect HTML structure
+- Check if elements are hidden (display: none)
+- Verify CSS styles are applied
+
+COMMON ISSUES:
+
+Nothing displaying:
+- Check browser console for errors
+- Verify API endpoints are running
+- Check /config response in Network tab
+
+Feature story blank:
+- Check /feature-story response in Network tab
+- Verify JSON has required fields
+- Check that API is returning data (not null)
+
+Image not showing:
+- Verify file exists in /public/images/
+- Check image_link matches filename
+- Look for 404 errors in Network tab
+
+Video not playing:
+- Verify youtube_link is valid URL
+- Check that URL contains video ID
+- Try URL in new tab to verify it works
+
+================================================================================
+CUSTOMIZATION EXAMPLES
+================================================================================
+
+CHANGE FEATURED STORY:
+
+Option 1: Via Environment Variable
+  Edit .env file:
+  FEATURED_STORY_INDEXNAME=feature002
+
+Option 2: Via URL Parameter
+  Load different feature in browser:
+  http://143.42.1.253/?indexname=feature002
+  (Note: this requires JavaScript to handle query params - not currently implemented)
+
+ADD CUSTOM CSS:
+
+In <style> section, add:
+  .custom-class {
+    color: red;
+    font-size: 20px;
+  }
+
+Then use in HTML:
+  <p class="custom-class">Custom text</p>
+
+CHANGE API ENDPOINTS:
+
+Find these lines:
+  const FEATURE_STORY_API = 'http://143.42.1.253:5000/feature-story';
+  const CONFIG_API = 'http://143.42.1.253:5000/config';
+
+Update URLs if API server moves to different host/port
+
+================================================================================
+PRODUCTION DEPLOYMENT
+================================================================================
+
+WEB SERVER CONFIGURATION:
+
+NGINX:
+  server {
+      listen 80;
+      server_name yourdomain.com;
+
+      location / {
+          root /var/www/joyandcaregiving/public;
+          index index.html;
+      }
+
+      location /api/ {
+          proxy_pass http://localhost:5000/;
+      }
+  }
+
+APACHE:
+  <VirtualHost *:80>
+      ServerName yourdomain.com
+      DocumentRoot /var/www/joyandcaregiving/public
+      <Directory /var/www/joyandcaregiving/public>
+          AllowOverride All
+      </Directory>
+  </VirtualHost>
+
+CACHING:
+  Add headers to serve static content with cache:
+  
+  # Cache static files for 1 year
+  <FilesMatch "\.(jpg|jpeg|png|gif|ico|css|js)$">
+    Header set Cache-Control "max-age=31536000, public"
+  </FilesMatch>
+
+HTTPS:
+  Always use HTTPS in production
+  Obtain SSL certificate (Let's Encrypt is free)
+  Redirect HTTP to HTTPS
+
+================================================================================
+VERSION HISTORY
+================================================================================
+
+v2.0 - Current
+- Support for nested social_media_post JSON structure
+- Improved hashtags handling (both string and array formats)
+- Better error messages and loading states
+- Fixed image and video display logic
+- Mobile-optimized navigation
+
+v1.0 - Initial release
+- Basic landing page structure
+- Feature story section
+- Navigation and sections
+- Responsive design
+
+================================================================================
+SUPPORT & CONTACT
+================================================================================
+
+FOR QUESTIONS:
+- Email: jcgfoundation@yahoo.com
+- Check browser console for detailed error messages
+- Review README files for API and server documentation
+
+FILES RELATED TO THIS PAGE:
+- chat_server.py: Backend API server
+- README.txt: Chat server documentation
+- /public/images/: Feature story images
+- developmentdirectoragent/.env: Configuration file
+
+================================================================================
+

@@ -553,6 +553,10 @@
             <div class="card" id="featureStoryContainer" style="display: none; margin-top: 3rem;">
                 <h1 id="storyTitle" style="color: #7c3aed; margin-bottom: 1.5rem;"></h1>
 
+                <div id="imageContainer" style="margin-bottom: 1.5rem; overflow: hidden; border-radius: 0.5rem; display: none;">
+                    <img id="storyImage" style="width: 100%; height: auto; object-fit: cover; max-height: 400px;" alt="">
+                </div>
+
                 <div style="background: #f7fafc; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
                     <p id="storyDescription" style="color: #4a5568; line-height: 1.8;"></p>
                 </div>
@@ -985,13 +989,30 @@
 
         // Feature Story Functionality
         const FEATURE_STORY_API = 'http://143.42.1.253:5000/feature-story';
-        // Optional: Set a specific indexname to display (leave empty to show first story)
-        const FEATURED_STORY_INDEXNAME = 'feature001';  // Change this to any other indexname
+        const CONFIG_API = 'http://143.42.1.253:5000/config';
+        let FEATURED_STORY_INDEXNAME = '';
 
         // Load feature story when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            loadFeatureStory();
+            // First fetch the configuration
+            fetchConfig().then(() => {
+                loadFeatureStory();
+            }).catch(error => {
+                console.warn('Could not load config, proceeding without indexname:', error);
+                loadFeatureStory();
+            });
         });
+
+        async function fetchConfig() {
+            try {
+                const response = await fetch(CONFIG_API);
+                const config = await response.json();
+                FEATURED_STORY_INDEXNAME = config.featured_story_indexname || '';
+                console.log(`Loaded featured story indexname from config: ${FEATURED_STORY_INDEXNAME}`);
+            } catch (error) {
+                console.warn('Failed to fetch config:', error);
+            }
+        }
 
         async function loadFeatureStory() {
             // Show loading state
@@ -1006,22 +1027,30 @@
                     apiUrl += `?indexname=${encodeURIComponent(FEATURED_STORY_INDEXNAME)}`;
                 }
 
+                console.log(`Fetching feature story from: ${apiUrl}`);
+
                 const response = await fetch(apiUrl);
+                console.log(`Response status: ${response.status}`);
+
                 const data = await response.json();
+                console.log('Response data:', data);
 
                 if (!response.ok) {
-                    throw new Error(data.error || 'Failed to load feature story');
+                    throw new Error(data.error || `Failed to load feature story (HTTP ${response.status})`);
                 }
 
                 // Populate story data
+                console.log('Displaying feature story...');
                 displayFeatureStory(data);
 
                 // Show story container
                 hideElement('storyLoadingContainer');
                 showElement('featureStoryContainer', true);
+                console.log('Feature story displayed successfully');
 
             } catch (error) {
                 console.error('Error loading feature story:', error);
+                console.error('Error stack:', error.stack);
                 showError(error.message);
                 hideElement('storyLoadingContainer');
                 showElement('storyErrorContainer', true);
@@ -1033,28 +1062,77 @@
             const titleElement = document.getElementById('storyTitle');
             titleElement.textContent = story.title || 'Feature Story';
 
+            // Set image if present
+            const imageContainer = document.getElementById('imageContainer');
+            const storyImage = document.getElementById('storyImage');
+
+            if (story.image_link) {
+                // Support full URLs, root paths, and relative paths
+                let imageUrl;
+                if (story.image_link.startsWith('http')) {
+                    imageUrl = story.image_link;
+                } else if (story.image_link.startsWith('/')) {
+                    imageUrl = story.image_link;
+                } else {
+                    imageUrl = `images/${story.image_link}`;
+                }
+
+                console.log(`Loading image from: ${imageUrl}`);
+
+                storyImage.src = imageUrl;
+                storyImage.alt = story.title || 'Feature Story Image';
+                storyImage.onerror = function() {
+                    console.error('Failed to load image:', this.src);
+                    imageContainer.style.display = 'none';
+                };
+                imageContainer.style.display = 'block';
+            } else {
+                imageContainer.style.display = 'none';
+            }
+
             // Set description
             const descElement = document.getElementById('storyDescription');
             descElement.textContent = story.description || '';
 
-            // Set hashtags
+            // Set hashtags - handle both string and array formats
             const hashtagsContainer = document.getElementById('storyHashtags');
             hashtagsContainer.innerHTML = '';
 
-            if (story.hashtags && Array.isArray(story.hashtags)) {
-                const hashtagsHtml = story.hashtags
-                    .map(tag => `<span style="display: inline-block; background: #e9d5ff; color: #7c3aed; padding: 0.5rem 1rem; border-radius: 2rem; margin-right: 0.5rem; margin-bottom: 0.5rem; font-weight: 500;">#${tag}</span>`)
-                    .join('');
-                hashtagsContainer.innerHTML = hashtagsHtml;
+            if (story.hashtags) {
+                let hashtags = [];
+
+                // Handle string format (comma-separated)
+                if (typeof story.hashtags === 'string') {
+                    hashtags = story.hashtags
+                        .split(',')
+                        .map(tag => tag.trim().replace(/^#/, '')); // Remove # if present
+                }
+                // Handle array format
+                else if (Array.isArray(story.hashtags)) {
+                    hashtags = story.hashtags.map(tag => String(tag).replace(/^#/, ''));
+                }
+
+                if (hashtags.length > 0) {
+                    const hashtagsHtml = hashtags
+                        .map(tag => `<span style="display: inline-block; background: #e9d5ff; color: #7c3aed; padding: 0.5rem 1rem; border-radius: 2rem; margin-right: 0.5rem; margin-bottom: 0.5rem; font-weight: 500;">#${tag}</span>`)
+                        .join('');
+                    hashtagsContainer.innerHTML = hashtagsHtml;
+                }
             }
 
             // Set YouTube video
+            const videoContainer = document.getElementById('videoContainer');
             if (story.youtube_link) {
                 const videoId = extractYouTubeId(story.youtube_link);
                 if (videoId) {
                     const youtubeFrame = document.getElementById('youtubeFrame');
                     youtubeFrame.src = `https://www.youtube.com/embed/${videoId}`;
+                    videoContainer.style.display = 'block';
+                } else {
+                    videoContainer.style.display = 'none';
                 }
+            } else {
+                videoContainer.style.display = 'none';
             }
         }
 
