@@ -1,3 +1,14 @@
+---
+config:
+      theme: redux
+---
+flowchart LR 
+        A(["Start"])
+        A --emails about school--> B["Gmail_saveattachments_to_gdrive"]
+        B --content creation prompt/skill + add article to vector memory-->D["drive_to_gemini_sync"]
+        D -- vector memory-->E["chat_server"]
+        E --vector memory, feature story images & jsons-->H["index.html"]
+        H --> I(["End"])
 
 gmail_saveattachments_to_gdrive.py
 ==================================
