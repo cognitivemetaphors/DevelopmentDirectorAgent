@@ -1,7 +1,4 @@
----
-config:
-      theme: redux
----
+'''mermaid
 flowchart LR 
         A(["Start"])
         A --emails about school--> B["Gmail_saveattachments_to_gdrive"]
@@ -9,7 +6,7 @@ flowchart LR
         D -- vector memory-->E["chat_server"]
         E --vector memory, feature story images & jsons-->H["index.html"]
         H --> I(["End"])
-
+'''
 gmail_saveattachments_to_gdrive.py
 ====================================
 
