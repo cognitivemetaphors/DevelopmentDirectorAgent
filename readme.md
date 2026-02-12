@@ -1532,4 +1532,76 @@ Content-Type: application/json
 
 {"question": "What did Anthony write about agile?"}
 ```
+# substack_to_filesearchstore.py
+
+Syncs all published posts from a Substack blog into a Google Gemini File Search Store. Designed to be run repeatedly — it detects previously uploaded posts and only uploads new ones.
+
+## How it works
+
+1. Fetches all posts from the Substack API (`/api/v1/posts`)
+2. Checks which posts are already in the File Search Store (matched by display name)
+3. Converts new posts from HTML to plain text
+4. Uploads each new post as a separate `.txt` document
+5. On the first run, creates a new File Search Store and saves the ID to `.env`
+
+## Setup
+
+### Dependencies
+
+```
+pip install requests beautifulsoup4 python-dotenv google-genai
+```
+
+### Environment variables (in `.env`)
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `GEMINI_API_KEY` | Google AI Studio API key | `AIzaSy...` |
+| `SUBSTACK_URL` | Base URL of the Substack blog | `https://acgarcia21.substack.com` |
+| `SUBSTACK_STORE_ID` | File Search Store ID (auto-created on first run) | `fileSearchStores/substackblog-abc123` |
+
+## Usage
+
+```
+python substack_to_filesearchstore.py
+```
+
+### First run
+
+Creates a new File Search Store, uploads all posts, and saves `SUBSTACK_STORE_ID` to `.env`:
+
+```
+Creating new File Search Store "SubstackBlog"...
+Created store: fileSearchStores/substackblog-5jlx2i33k1ir
+Saved SUBSTACK_STORE_ID to .env
+Fetching posts from https://acgarcia21.substack.com...
+Found 38 post(s)
+  UPLOAD: Ship code, Deploy (4765 chars)
+  UPLOAD: Tighten Up Your Brand (4849 chars)
+  ...
+```
+
+### Subsequent runs
+
+Skips already-uploaded posts, only uploads new ones:
+
+```
+Using existing store: fileSearchStores/substackblog-5jlx2i33k1ir
+  39 document(s) already in store
+Found 40 post(s)
+  SKIP (already uploaded): Ship code, Deploy
+  SKIP (already uploaded): Tighten Up Your Brand
+  UPLOAD: My Newest Post (3200 chars)
+```
+
+## Querying the store
+
+Once posts are uploaded, you can query them via the `/substack` endpoint on `chat_server.py`:
+
+```
+POST /substack
+Content-Type: application/json
+
+{"question": "What did Anthony write about agile?"}
+```
 

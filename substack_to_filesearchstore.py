@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Substack to Gemini File Search Store Sync
--
+
 Fetches ALL posts from a Substack blog (via the archive API) and uploads
 each as a separate text document to a Gemini File Search Store. Skips
 posts that have already been uploaded (matched by display name).
