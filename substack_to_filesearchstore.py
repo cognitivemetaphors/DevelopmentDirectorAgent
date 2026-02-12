@@ -10,7 +10,7 @@ On the first run, creates a new File Search Store and saves the ID to .env.
 Subsequent runs reuse the same store.
 
 Usage:
-    python substack_to_filesearchstore.py
+    python substack_to_filesearchstore.py-
 """
 
 import os
