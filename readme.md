@@ -5,7 +5,9 @@ flowchart LR
         B --content creation prompt/skill + add article to vector memory-->D["drive_to_gemini_sync"]
         D -- vector memory-->E["chat_server"]
         E --vector memory, feature story images & jsons-->H["index.html"]
+        A --> J
         J["substack blog"]--substack entries-->L["substack_to_filesearchstore"]
+        L --vector memory-->E
         H --> I(["End"])
 ```
 gmail_saveattachments_to_gdrive.py
