@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Chat Server for Gemini File Search Store
-
+-
 A Flask API that receives questions and queries a Gemini File Search Store
 to provide answers based on uploaded documents.
 

@@ -14,7 +14,7 @@ gmail_saveattachments_to_gdrive.py
 Description:
     Monitors Gmail for unread emails from a specific sender with a specific 
     subject keyword, downloads matching attachments, uploads them to Google 
-    Drive, and labels the processed emails.
+    Drive, and labels the processed emails.-
 
 Usage:
     python gmail_saveattachments_to_gdrive.py
