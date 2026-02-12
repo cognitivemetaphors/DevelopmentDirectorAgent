@@ -7,7 +7,7 @@ each as a separate text document to a Gemini File Search Store. Skips
 posts that have already been uploaded (matched by display name).
 
 On the first run, creates a new File Search Store and saves the ID to .env.
-Subsequent runs reuse the same store.
+Subsequent runs reuse the same store..
 
 Usage:
     python substack_to_filesearchstore.py-
