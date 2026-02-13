@@ -15,15 +15,15 @@ Environment Variables (in .env):
 
 import os
 import sys
+import requests as http_requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-# Load environment variables-
-ENV_FILE_PATH = r'//var//www//joyandcaregiving//developmentdirectoragent//.env'
-
+# Load environment variables
+ENV_FILE_PATH = r'//var//www//joyandcaregivng//developmentdirectoragent//.env'
 load_dotenv(ENV_FILE_PATH)
 
 # Configuration
@@ -137,6 +137,34 @@ def substack_chat():
 
     except Exception as e:
         print(f'Error processing substack chat request: {e}')
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/substack-stats', methods=['GET'])
+def substack_stats():
+    """Return the total number of Substack posts (proxied to avoid CORS)."""
+    substack_url = os.getenv('SUBSTACK_URL', 'https://acgarcia21.substack.com')
+    api_url = f'{substack_url}/api/v1/posts'
+    post_count = 0
+    offset = 0
+    limit = 50
+
+    try:
+        while True:
+            resp = http_requests.get(api_url, params={'limit': limit, 'offset': offset}, timeout=15)
+            resp.raise_for_status()
+            batch = resp.json()
+            if not batch:
+                break
+            post_count += len(batch)
+            if len(batch) < limit:
+                break
+            offset += limit
+
+        return jsonify({'post_count': post_count})
+
+    except Exception as e:
+        print(f'Error fetching substack stats: {e}')
         return jsonify({'error': str(e)}), 500
 
 

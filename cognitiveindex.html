@@ -436,6 +436,140 @@
             margin-top: 0.5rem;
         }
 
+        /* Blog Goal Chart */
+        .blog-goal-chart {
+            margin-top: 2.5rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .blog-goal-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .chart-area {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .chart-bars {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chart-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .chart-label {
+            width: 90px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #555;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .chart-bar-track {
+            flex: 1;
+            height: 32px;
+            background: #f0f0f0;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chart-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: white;
+            transition: width 1s ease;
+            min-width: 40px;
+        }
+
+        .chart-bar-fill.posts {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .chart-bar-fill.days {
+            background: linear-gradient(135deg, #a0a0a0 0%, #777 100%);
+        }
+
+        .chart-diff-box {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border: 3px solid;
+        }
+
+        .chart-diff-box.ahead {
+            border-color: #667eea;
+            background: #f0f3ff;
+        }
+
+        .chart-diff-box.behind {
+            border-color: #e53e3e;
+            background: #fff5f5;
+        }
+
+        .chart-diff-number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .chart-diff-box.ahead .chart-diff-number {
+            color: #667eea;
+        }
+
+        .chart-diff-box.behind .chart-diff-number {
+            color: #e53e3e;
+        }
+
+        .chart-diff-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .chart-diff-box.ahead .chart-diff-label {
+            color: #667eea;
+        }
+
+        .chart-diff-box.behind .chart-diff-label {
+            color: #e53e3e;
+        }
+
+        .chart-loading {
+            text-align: center;
+            color: #999;
+            font-size: 0.9rem;
+            padding: 1rem;
+        }
+
         @media (max-width: 768px) {
             nav ul {
                 gap: 1rem;
@@ -636,6 +770,31 @@
                 <p class="substack-disclaimer">Powered by AI. Answers are based on Anthony's Substack blog posts.</p>
             </div>
 
+            <div class="blog-goal-chart" id="blogGoalChart">
+                <div class="blog-goal-title">Goal: 1 Blog Per Day</div>
+                <div class="chart-loading" id="chartLoading">Loading blog stats...</div>
+                <div class="chart-area" id="chartArea" style="display: none;">
+                    <div class="chart-bars">
+                        <div class="chart-row">
+                            <div class="chart-label">Blog Posts</div>
+                            <div class="chart-bar-track">
+                                <div class="chart-bar-fill posts" id="postsBar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <div class="chart-row">
+                            <div class="chart-label">Days</div>
+                            <div class="chart-bar-track">
+                                <div class="chart-bar-fill days" id="daysBar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-diff-box" id="diffBox">
+                        <div class="chart-diff-number" id="diffNumber"></div>
+                        <div class="chart-diff-label" id="diffLabel"></div>
+                    </div>
+                </div>
+            </div>
+
             <div style="text-align: center;">
                 <a href="https://acgarcia21.substack.com" class="cta-button" style="margin-top: 2rem;">Subscribe on Substack →</a>
             </div>
@@ -757,6 +916,58 @@
             const el = document.getElementById(id);
             if (el) el.remove();
         }
+
+        // Blog Goal Chart
+        async function loadBlogGoalChart() {
+            const blogStartDate = new Date('2025-12-28');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const daysSinceStart = Math.floor((today - blogStartDate) / (1000 * 60 * 60 * 24));
+
+            let postCount = 0;
+
+            try {
+                const resp = await fetch('http://143.42.1.253:5000/substack-stats');
+                const data = await resp.json();
+                if (data.error) throw new Error(data.error);
+                postCount = data.post_count;
+            } catch (e) {
+                document.getElementById('chartLoading').textContent = 'Could not load blog stats.';
+                return;
+            }
+
+            const diff = postCount - daysSinceStart;
+            const maxVal = Math.max(postCount, daysSinceStart, 1);
+
+            document.getElementById('chartLoading').style.display = 'none';
+            document.getElementById('chartArea').style.display = 'flex';
+
+            const postsBar = document.getElementById('postsBar');
+            const daysBar = document.getElementById('daysBar');
+            postsBar.textContent = postCount;
+            daysBar.textContent = daysSinceStart;
+
+            requestAnimationFrame(() => {
+                postsBar.style.width = Math.round((postCount / maxVal) * 100) + '%';
+                daysBar.style.width = Math.round((daysSinceStart / maxVal) * 100) + '%';
+            });
+
+            const diffBox = document.getElementById('diffBox');
+            const diffNumber = document.getElementById('diffNumber');
+            const diffLabel = document.getElementById('diffLabel');
+
+            if (diff >= 0) {
+                diffBox.className = 'chart-diff-box ahead';
+                diffNumber.textContent = '+' + diff;
+                diffLabel.textContent = 'ahead';
+            } else {
+                diffBox.className = 'chart-diff-box behind';
+                diffNumber.textContent = diff;
+                diffLabel.textContent = 'behind';
+            }
+        }
+
+        loadBlogGoalChart();
     </script>
 </body>
 </html>
