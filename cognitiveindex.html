@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive Metaphors - Harnessing Liberal Arts To Build Powerful Agentic Solutions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-placeholder {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+	    object-hit: contain;
+        }
+
+        .company-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            letter-spacing: -0.5px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin: 0;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover, nav a.active {
+            color: #764ba2;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero {
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            max-width: 900px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            background: #f8f9ff;
+        }
+
+        .carousel-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .carousel-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #667eea;
+            margin-bottom: 2rem;
+        }
+
+        .carousel {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .recommendation {
+            min-width: 100%;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .recommendation-text {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        .recommendation-author {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .recommendation-title {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .carousel-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ddd;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .carousel-dot.active {
+            background: #667eea;
+        }
+
+        .content-page {
+            background: rgba(255, 255, 255, 0.95);
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 3rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .content-page h1 {
+            color: #667eea;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+        }
+
+        .content-page h2 {
+            color: #764ba2;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .content-page p {
+            margin-bottom: 1rem;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .social-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .social-button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .social-button svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .project-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .project-card h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .project-link {
+            color: #764ba2;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .project-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Ask Anthony section */
+        .askanthony-intro {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .headshot-oval {
+            width: 160px;
+            height: 200px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid #667eea;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            margin-bottom: 1.5rem;
+        }
+
+        .headshot-oval img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .text-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.2rem 1.8rem;
+            border-radius: 20px 20px 20px 4px;
+            max-width: 500px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            text-align: center;
+        }
+
+        .substack-chat-container {
+            margin-top: 2rem;
+        }
+
+        .substack-chat-messages {
+            height: 350px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: #f8f9ff;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border: 1px solid #e0e0e0;
+        }
+
+        .substack-chat-message {
+            margin-bottom: 1rem;
+            display: flex;
+        }
+
+        .substack-chat-message.user {
+            justify-content: flex-end;
+        }
+
+        .substack-chat-message .message-bubble {
+            max-width: 75%;
+            padding: 0.8rem 1.2rem;
+            border-radius: 16px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .substack-chat-message.bot .message-bubble {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 4px;
+        }
+
+        .substack-chat-message.user .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .substack-chat-input-row {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .substack-chat-input {
+            flex: 1;
+            padding: 0.8rem 1.2rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .substack-chat-input:focus {
+            border-color: #667eea;
+        }
+
+        .substack-send-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .substack-send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .substack-typing .typing-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #667eea;
+            margin: 0 2px;
+            animation: typingBounce 1.4s infinite;
+        }
+
+        .substack-typing .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .substack-typing .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-6px); }
+        }
+
+        .substack-disclaimer {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .content-page {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+
+            .nav-container {
+                justify-content: center;
+            }
+
+            .company-name {
+                font-size: 1.2rem;
+            }
+
+            .logo-placeholder {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo-section">
+		    <img src="images/logo.png" alt="Cognitive Metaphors Logo" class="logo-image" style="width: 5%; height: 5%; object-hit: contain;"> 
+	    <div class="company-name">Cognitive Metaphors</div>
+            </div>
+            <ul>
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#projects" class="nav-link">Projects</a></li>
+                <li><a href="#writing" class="nav-link">Writing</a></li>
+                <li><a href="#askanthony" class="nav-link">Ask Anthony</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div id="home" class="page active">
+        <div class="hero">
+            <h1>Harnessing Liberal Arts To Build Powerful Agentic Solutions</h1>
+            <a href="https://acgarcia21.substack.com" class="cta-button">Subscribe on Substack →</a>
+        </div>
+
+        <div class="carousel-container">
+            <h2 class="carousel-title">Recommendations</h2>
+            <div class="carousel">
+                <div class="carousel-track" id="carouselTrack">
+                    <div class="recommendation">
+                        <p class="recommendation-text">"Anthony is both technical and managerial, which makes a huge difference when things get complex. He understands the details, asks the right questions, keeps priorities clear, and makes sure everyone is aligned. And communication-wise, he’s excellent - straightforward, proactive, and really good at keeping momentum without creating noise."</p>
+                        <p class="recommendation-author">Raghavendraprasad Bhat</p>
+                        <p class="recommendation-title">Solution Architect, UiPath</p>
+                    </div>
+                    <div class="recommendation">
+                        <p class="recommendation-text">"Anthony played a key role in all aspects of the project including requirements gathering, project management, software design, data analysis and supporting the UAT/Go-Live stages. We can’t thank Anthony enough for his contribution.."</p>
+                        <p class="recommendation-author">Rahul Revankar</p>
+                        <p class="recommendation-title">Executive Vice President, HOC</p>
+                    </div>
+                    <div class="recommendation">
+                        <p class="recommendation-text">"Anthony is combo of tech and project management which very hard to find. Anthony provides a razor-sharp understanding user requirement and translating into technical design."</p>
+                        <p class="recommendation-author">Nirav Shah</p>
+                        <p class="recommendation-title">Director, J&J</p>
+                    </div>
+                </div>
+                <div class="carousel-nav" id="carouselNav"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="about" class="page">
+        <div class="content-page">
+            <h1>About Cognitive Metaphors</h1>
+            <p>Since 1993, Cognitive Metaphors has been at the forefront of combining liberal arts thinking with cutting-edge technology. What began as an independent consultancy specializing in business intelligence and data analytics has evolved into a pioneering force in agentic AI solutions.</p>
+            
+            <h2>Our Journey</h2>
+            <p>Over the years, we've partnered with leading organizations including PJM Interconnection, Razorfish, and NRG Energy, delivering innovative solutions in business intelligence and data analytics. Today, our focus has shifted to building powerful agentic solutions that leverage the depth of liberal arts perspectives to create more human-centered AI systems.</p>
+            
+            <h2>Our Mission</h2>
+            <p>At Cognitive Metaphors, we believe that the most impactful AI solutions emerge from a deep understanding of human thought, language, and culture. We're committed to building a reputation for knowledge sharing in agentic solutions—creating tools and frameworks that can be freely shared with the broader community, particularly to support charitable organizations through our development director agent initiatives.</p>
+            
+            <h2>Building Community</h2>
+            <p>Through our Substack blog, we're fostering a community of practitioners, thinkers, and builders who believe in the power of interdisciplinary approaches to AI. We share our code, insights, and learnings openly, enabling fruitful collaborations that advance the field of agentic AI for social good.</p>
+            
+            <h2>Connect With Us</h2>
+            <div class="social-links">
+                <a href="https://github.com/cognitivemetaphors/DevelopmentDirectorAgent" target="_blank" class="social-button">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    <span>GitHub</span>
+                </a>
+                <a href="https://www.linkedin.com/in/acgarcia21" target="_blank" class="social-button">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                    </svg>
+                    <span>LinkedIn</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="projects" class="page">
+        <div class="content-page">
+            <h1>Projects</h1>
+            <p>Our projects embody our commitment to using technology for social good while advancing the field of agentic AI solutions.</p>
+            
+            <div class="project-card">
+                <h3>Joy and Caregiving Foundation Development Director Agent</h3>
+                <p><strong>Featured Project</strong></p>
+                <p>Our primary focus is developing an agentic solution for <a href="https://joyandcaregivingfoundation.org" target="_blank" class="project-link">joyandcaregivingfoundation.org</a>, a charitable foundation supporting St. Anthony's Development and Learning Center (SADLC) in Guiguinto, Bulacan, Philippines.</p>
+                
+                <h4 style="color: #764ba2; margin-top: 1.5rem; margin-bottom: 0.5rem;">About the Foundation</h4>
+                <p>Since 2005, the Joy and Caregiving Foundation has been raising funds to support SADLC, a school providing heavily subsidized early childhood education to children in the Guiguinto area. The school, operating since 2000, makes quality education accessible to families who otherwise couldn't afford it.</p>
+                
+                <h4 style="color: #764ba2; margin-top: 1.5rem; margin-bottom: 0.5rem;">The Development Director Agent</h4>
+                <p>We're building an AI agent that serves as a development director for the Joy and Caregiving Foundation, capable of:</p>
+                <ul style="margin-left: 2rem; margin-top: 0.5rem; color: #555;">
+                    <li>Promoting awareness of the foundation's mission and impact</li>
+                    <li>Facilitating fundraising efforts and donor engagement</li>
+                    <li>Supporting the school's expansion plans, including new adult entrepreneurial programs in cookery, hair and nails, and massage therapy</li>
+                </ul>
+                
+                <h4 style="color: #764ba2; margin-top: 1.5rem; margin-bottom: 0.5rem;">Open Source Commitment</h4>
+                <p>All code for this agentic solution will be posted publicly on our GitHub, enabling other charitable organizations to leverage our work and build their own development director agents. We believe in democratizing access to sophisticated AI tools for nonprofits and social enterprises.</p>
+            </div>
+
+            <div class="project-card">
+                <h3>Previous Consulting Work</h3>
+                <p>Our extensive background includes business intelligence and data analytics projects for major organizations:</p>
+                <ul style="margin-left: 2rem; margin-top: 0.5rem; color: #555;">
+                    <li><strong>PJM Interconnection:</strong> Data analytics and business intelligence solutions</li>
+                    <li><strong>Razorfish:</strong> Strategic technology consulting</li>
+                    <li><strong>NRG Energy:</strong> Business intelligence implementations</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="writing" class="page">
+        <div class="content-page">
+            <h1>Writing</h1>
+            <p>Our Substack blog is where we share insights, code, and learnings about building agentic AI solutions with a liberal arts foundation. We write for practitioners, researchers, and anyone interested in the intersection of humanities and artificial intelligence.</p>
+            
+            <h2>What We Write About</h2>
+            <p>Our writing explores how liberal arts perspectives—from philosophy and linguistics to psychology and cultural studies—inform the development of more thoughtful, effective, and ethical AI systems. We cover technical implementations, theoretical frameworks, and practical applications of agentic solutions.</p>
+            
+            <h2>Community and Collaboration</h2>
+            <p>We believe in building through collaboration. Our blog serves as a platform for fostering connections with other builders and thinkers who share our vision of democratizing agentic AI, particularly for charitable organizations and social enterprises. We share our code openly and encourage others to build upon our work.</p>
+            
+            <h2>Featured Topics</h2>
+            <ul style="margin-left: 2rem; margin-top: 1rem; color: #555;">
+                <li>Building development director agents for nonprofits</li>
+                <li>Applying cognitive metaphor theory to AI system design</li>
+                <li>Open-source frameworks for charitable organization AI tools</li>
+                <li>Case studies from the Joy and Caregiving Foundation project</li>
+                <li>The role of liberal arts in modern AI development</li>
+            </ul>
+            
+            <h2>Join Our Community</h2>
+            <p>Subscribe to receive essays, technical guides, code releases, and updates on our projects. Together, we can advance the field of agentic AI while making powerful tools accessible to organizations doing good in the world.</p>
+            
+            <a href="https://acgarcia21.substack.com" class="cta-button" style="margin-top: 2rem;">Subscribe on Substack →</a>
+        </div>
+    </div>
+
+    <div id="askanthony" class="page">
+        <div class="content-page">
+            <h1>Ask Anthony</h1>
+
+            <div class="askanthony-intro">
+                <div class="headshot-oval">
+                    <img src="images/headshot.jpg" alt="Anthony Garcia">
+                </div>
+                <div class="text-bubble">
+                    Hi, my name is Anthony. Ask me anything about my substack blog on AI.
+                </div>
+            </div>
+
+            <div class="substack-chat-container">
+                <div class="substack-chat-messages" id="substackChatMessages"></div>
+                <div class="substack-chat-input-row">
+                    <input type="text" id="substackChatInput" class="substack-chat-input" placeholder="Ask me about my blog posts..." onkeypress="if(event.key==='Enter') sendSubstackMessage()">
+                    <button class="substack-send-btn" onclick="sendSubstackMessage()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"/>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                        </svg>
+                    </button>
+                </div>
+                <p class="substack-disclaimer">Powered by AI. Answers are based on Anthony's Substack blog posts.</p>
+            </div>
+
+            <div style="text-align: center;">
+                <a href="https://acgarcia21.substack.com" class="cta-button" style="margin-top: 2rem;">Subscribe on Substack →</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pages = document.querySelectorAll('.page');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                
+                // Update active states
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                pages.forEach(p => p.classList.remove('active'));
+                document.getElementById(targetId).classList.add('active');
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        // Carousel
+        const track = document.getElementById('carouselTrack');
+        const nav = document.getElementById('carouselNav');
+        const recommendations = document.querySelectorAll('.recommendation');
+        let currentSlide = 0;
+
+        // Create navigation dots
+        recommendations.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.classList.add('carousel-dot');
+            if (index === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(index));
+            nav.appendChild(dot);
+        });
+
+        const dots = document.querySelectorAll('.carousel-dot');
+
+        function goToSlide(index) {
+            currentSlide = index;
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+        }
+
+        // Auto-advance carousel
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % recommendations.length;
+            goToSlide(currentSlide);
+        }, 5000);
+
+        // Substack Chat
+        const SUBSTACK_API_URL = 'http://143.42.1.253:5000/substack';
+
+        async function sendSubstackMessage() {
+            const input = document.getElementById('substackChatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            addSubstackMessage(message, 'user');
+            input.value = '';
+
+            const loadingId = showSubstackLoading();
+
+            try {
+                const response = await fetch(SUBSTACK_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: message })
+                });
+                const data = await response.json();
+                removeSubstackLoading(loadingId);
+
+                if (data.error) {
+                    addSubstackMessage('Sorry, I encountered an error. Please try again later.', 'bot');
+                } else {
+                    addSubstackMessage(data.answer, 'bot');
+                }
+            } catch (error) {
+                removeSubstackLoading(loadingId);
+                addSubstackMessage('Sorry, I could not connect to the server. Please try again later.', 'bot');
+            }
+        }
+
+        function addSubstackMessage(text, sender) {
+            const container = document.getElementById('substackChatMessages');
+            const div = document.createElement('div');
+            div.className = 'substack-chat-message ' + sender;
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.textContent = text;
+            div.appendChild(bubble);
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showSubstackLoading() {
+            const container = document.getElementById('substackChatMessages');
+            const div = document.createElement('div');
+            const id = 'substack-loading-' + Date.now();
+            div.id = id;
+            div.className = 'substack-chat-message bot';
+            div.innerHTML = '<div class="message-bubble substack-typing"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>';
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+            return id;
+        }
+
+        function removeSubstackLoading(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+    </script>
+</body>
+</html>

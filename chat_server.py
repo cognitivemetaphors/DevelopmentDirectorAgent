@@ -22,7 +22,8 @@ from google import genai
 from google.genai import types
 
 # Load environment variables-
-ENV_FILE_PATH = r'C:\Users\acgar\OneDrive\Documents\GoogleAI\.env'
+ENV_FILE_PATH = r'//var//www//joyandcaregiving//developmentdirectoragent//.env'
+
 load_dotenv(ENV_FILE_PATH)
 
 # Configuration
