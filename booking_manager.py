@@ -93,7 +93,9 @@ def check_calendar_availability(meeting_date, meeting_time, duration_minutes):
     Check if Anthony's calendar is free for the requested time slot.
     Returns (is_free: bool, conflict_summary: str or None).
     """
-    start_dt = datetime.fromisoformat(f'{meeting_date}T{meeting_time}:00')
+    from zoneinfo import ZoneInfo
+    eastern = ZoneInfo('America/New_York')
+    start_dt = datetime.fromisoformat(f'{meeting_date}T{meeting_time}:00').replace(tzinfo=eastern)
     end_dt = start_dt + timedelta(minutes=duration_minutes)
 
     body = {

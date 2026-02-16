@@ -100,7 +100,7 @@ BOOKING_FUNCTION = types.FunctionDeclaration(
             ),
             'meeting_date': types.Schema(
                 type=types.Type.STRING,
-                description='The requested meeting date in ISO format (YYYY-MM-DD)',
+                description='The requested meeting date in ISO format (YYYY-MM-DD). If the user does not specify a year, assume the current year (2026).',
             ),
             'meeting_time': types.Schema(
                 type=types.Type.STRING,
