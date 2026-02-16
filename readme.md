@@ -6,8 +6,8 @@ flowchart LR
         D -- vector memory-->E["chat_server"]
         E --vector memory, feature story images & jsons -->H["index.html"]
         H --booking requests-->E
-        E -->booking email-->G["Gmail"]
-        G -->booking approaval-->K["Google Calendar"]
+        E -->|booking email| G["Gmail"]
+        G -->|booking approaval| K["Google Calendar"]
         A --> J
         J["substack blog"]--substack entries-->L["substack_to_filesearchstore"]
         L --vector memory-->E
