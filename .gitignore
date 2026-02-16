@@ -1,5 +1,6 @@
 .env
 token.pickle
+token.json
 credentials.json
 instagram_poster.py
 logs/
