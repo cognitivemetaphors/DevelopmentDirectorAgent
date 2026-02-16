@@ -474,3 +474,50 @@ pip install python-dotenv google-genai google-api-python-client google-auth goog
 ## Logging
 
 Logs are written to `logs/sync_YYYYMMDD.log` with rotation (10 MB max, 7 backups).
+
+---
+
+# cognitiveindex.html
+
+Website for Cognitive Metaphors — Anthony Garcia's consulting practice focused on AI agentic solutions. Single-page application with client-side routing, an AI chat interface, and a live blog goal tracker.
+
+## Pages
+
+| Page | Nav Link | Description |
+|------|----------|-------------|
+| Home | Home | Hero section, LinkedIn recommendations carousel |
+| About | About | Background on Cognitive Metaphors and Anthony's approach |
+| Projects | Projects | Portfolio of AI/agentic projects |
+| Writing | Writing | Substack blog goal chart (posts vs. days since start) |
+| Ask Anthony | Ask Anthony | AI chat for blog questions + meeting booking |
+
+## How it works
+
+- All pages rendered in a single HTML file using `<div class="page">` sections toggled by JavaScript
+- Navigation handled client-side with smooth scroll to top
+- LinkedIn recommendations displayed in an auto-advancing carousel (5-second interval)
+
+## Chat integration
+
+The "Ask Anthony" page connects to the `/substack` endpoint on `chat_server.py`. Users can:
+
+- **Ask questions** about Anthony's Substack blog posts (uses Gemini file_search)
+- **Book meetings** with Anthony (uses Gemini function calling + booking_manager.py)
+
+Example booking prompt is shown in the UI with a note that all times are in New York (Eastern) time.
+
+## Blog goal chart
+
+The Writing page fetches live post count from `/substack-stats` and compares it against days elapsed since the blog start date (December 28, 2025). Displays an animated bar chart showing whether posts are ahead or behind pace.
+
+## API endpoints used
+
+| Endpoint | Purpose |
+|----------|---------|
+| `POST /substack` | Chat queries and booking requests |
+| `GET /substack-stats` | Live post count for the goal chart |
+
+## Dependencies
+
+None — pure HTML, CSS, and vanilla JavaScript. No build step required.
+
