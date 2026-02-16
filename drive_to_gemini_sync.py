@@ -20,6 +20,7 @@ Environment Variables (in .env):
 import os
 import io
 import sys
+import pickle
 import logging
 import argparse
 import tempfile
@@ -36,7 +37,7 @@ from googleapiclient.http import MediaIoBaseDownload
 from google import genai
 
 # === CONFIGURATION ===
-ENV_FILE_PATH = r'//var//www//joyandcaregiving//developmentdirectoragent//.env'
+ENV_FILE_PATH = r'.//.env'
 
 # OAuth2 scopes - full drive access needed for move operations
 SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -47,6 +48,7 @@ SUPPORTED_MIME_TYPES = {
     'text/plain': '.txt',
     'text/html': '.html',
     'text/csv': '.csv',
+    'application/json': '.json',
     'application/vnd.google-apps.document': '.gdoc',  # Export as PDF
     'application/vnd.google-apps.spreadsheet': '.gsheet',  # Export as CSV
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
@@ -150,7 +152,8 @@ def get_credentials():
     credentials_file = os.getenv('CREDENTIALS_FILE')
 
     if os.path.exists(token_file):
-        creds = Credentials.from_authorized_user_file(token_file)
+        with open(token_file, 'rb') as f:
+            creds = pickle.load(f)
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
@@ -163,8 +166,8 @@ def get_credentials():
             )
             creds = flow.run_local_server(port=0)
 
-        with open(token_file, 'w') as f:
-            f.write(creds.to_json())
+        with open(token_file, 'wb') as f:
+            pickle.dump(creds, f)
             logger.info(f'Credentials saved to {token_file}')
 
     return creds

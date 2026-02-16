@@ -6,10 +6,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 # The scopes your Development Director needs
 SCOPES = [
     'https://www.googleapis.com/auth/gmail.readonly',
-    'https://www.googleapis.com/auth/gmail.modify',
-    'https://www.googleapis.com/auth/gmail.send',
-    'https://www.googleapis.com/auth/drive.file',
-    'https://www.googleapis.com/auth/calendar',
+    'https://www.googleapis.com/auth/drive.file'
 ]
 
 def main():
@@ -23,7 +20,7 @@ def main():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file('//var//www//joyandcaregiving//developmentdirectoragent//credentials.json', SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
         
         # Save the credentials for the next run
