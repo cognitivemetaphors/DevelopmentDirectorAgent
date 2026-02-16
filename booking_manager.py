@@ -4,7 +4,7 @@ Booking Manager — handles meeting request approvals, Google Calendar
 event creation, and email notifications via Gmail API.
 
 Used by chat_server.py to support human-in-the-loop meeting booking
-through the /substack chat interface.
+through the /substack chat interface..
 """
 
 import os
