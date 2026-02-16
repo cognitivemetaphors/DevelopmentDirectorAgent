@@ -23,7 +23,7 @@ from dotenv import load_dotenv
 from google import genai
 
 # === CONFIGURATION ===
-ENV_FILE_PATH = r'.//.env'
+ENV_FILE_PATH = r'//var//www//joyandcaregiving//developmentdirectoragent//.env'
 STORE_DISPLAY_NAME = 'SubstackBlog'
 
 
