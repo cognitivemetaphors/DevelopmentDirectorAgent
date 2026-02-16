@@ -4,7 +4,7 @@ Booking Manager — handles meeting request approvals, Google Calendar
 event creation, and email notifications via Gmail API.
 
 Used by chat_server.py to support human-in-the-loop meeting booking
-through the /substack chat interface..
+through the /substack chat interface.
 """
 
 import os
@@ -20,13 +20,13 @@ from googleapiclient.discovery import build
 from dotenv import load_dotenv
 
 # Load environment variables
-ENV_FILE_PATH = r'//var//www//joyandcaregiving/developmentdirectoragent//.env'
+ENV_FILE_PATH = r'//var//www//joyandcaregiving//developmentdirectoragent//.env'
 load_dotenv(ENV_FILE_PATH)
 
 # Configuration
 TOKEN_FILE = os.getenv('TOKEN_FILE')
 CREDENTIALS_FILE = os.getenv('CREDENTIALS_FILE')
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'bookings.db')
+DB_PATH = os.getenv('DB_PATH', '/var/www/cognitivemetaphors/bookings.db')
 SERVER_BASE_URL = os.getenv('SERVER_BASE_URL', 'http://143.42.1.253:5000')
 OWNER_EMAIL = 'acgarcia21@gmail.com'
 CALENDAR_ID = 'primary'

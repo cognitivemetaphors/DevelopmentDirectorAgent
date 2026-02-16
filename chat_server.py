@@ -14,6 +14,7 @@ Environment Variables (in .env):
 """
 
 import os
+import re
 import sys
 import requests as http_requests
 from flask import Flask, request, jsonify
@@ -23,7 +24,7 @@ from google import genai
 from google.genai import types
 
 # Load environment variables
-ENV_FILE_PATH = r'//var//www//joyandcaregivng//developmentdirectoragent//.env'
+ENV_FILE_PATH = r'//var//www//joyandcaregiving//developmentdirectoragent//.env'
 load_dotenv(ENV_FILE_PATH)
 
 # Configuration
@@ -66,9 +67,57 @@ Your role is to:
 - Summarize ideas and insights from the articles
 - Be conversational and informative
 
-If the answer is not in the blog content, say so clearly.
+You can also help users book a meeting with Anthony. If a user wants to schedule
+a meeting, call, or appointment, use the request_meeting function. You MUST ask
+for any missing required details (their name, preferred date, preferred time,
+and how long the meeting should be in minutes) before calling the function.
+Also ask if they'd like to include a brief note about what they want to discuss
+(this is optional). If they don't provide an email, that's okay — call the
+function without it but let them know they won't receive an email confirmation.
+
+If the answer to a non-booking question is not in the blog content, say so clearly.
 
 Keep your answers concise but informative."""
+
+# Gemini function declaration for meeting booking
+BOOKING_FUNCTION = types.FunctionDeclaration(
+    name='request_meeting',
+    description=(
+        'Use this function when the user wants to schedule or book a meeting, '
+        'call, or appointment with Anthony. Extract the relevant details from '
+        'the user message.'
+    ),
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            'requester_name': types.Schema(
+                type=types.Type.STRING,
+                description='The name of the person requesting the meeting',
+            ),
+            'requester_email': types.Schema(
+                type=types.Type.STRING,
+                description='The email address of the person requesting the meeting',
+            ),
+            'meeting_date': types.Schema(
+                type=types.Type.STRING,
+                description='The requested meeting date in ISO format (YYYY-MM-DD)',
+            ),
+            'meeting_time': types.Schema(
+                type=types.Type.STRING,
+                description='The requested meeting time in 24-hour format (HH:MM)',
+            ),
+            'duration_minutes': types.Schema(
+                type=types.Type.INTEGER,
+                description='The requested meeting duration in minutes',
+            ),
+            'purpose': types.Schema(
+                type=types.Type.STRING,
+                description='The purpose or topic of the meeting',
+            ),
+        },
+        required=['requester_name', 'meeting_date', 'meeting_time', 'duration_minutes'],
+    ),
+)
 
 
 @app.route('/chat', methods=['POST'])
@@ -105,6 +154,14 @@ def chat():
         return jsonify({'error': str(e)}), 500
 
 
+# Pattern to detect booking/scheduling intent
+_BOOKING_RE = re.compile(
+    r'\b(book|schedule|set\s*up)\b.{0,30}\b(meeting|call|appointment|time)\b'
+    r'|\b(meet\s+with|book\s+with|book\s+time|schedule\s+time)\b',
+    re.IGNORECASE
+)
+
+
 @app.route('/substack', methods=['POST'])
 def substack_chat():
     """Handle chat requests against the Substack blog store."""
@@ -118,26 +175,118 @@ def substack_chat():
         if not question:
             return jsonify({'error': 'No question provided'}), 400
 
-        response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=question,
-            config=types.GenerateContentConfig(
-                system_instruction=SUBSTACK_SYSTEM_PROMPT,
-                tools=[types.Tool(
-                    file_search=types.FileSearch(
-                        file_search_store_names=[SUBSTACK_STORE_ID]
-                    )
-                )]
-            )
-        )
-
-        answer = response.text if response.text else "I'm sorry, I couldn't find an answer to your question."
-
-        return jsonify({'answer': answer})
+        # The google-genai SDK cannot combine file_search and
+        # function_declarations in a single call, so route by intent.
+        if _BOOKING_RE.search(question):
+            return _handle_substack_booking(question)
+        return _handle_substack_question(question)
 
     except Exception as e:
-        print(f'Error processing substack chat request: {e}')
+        print(f'Error processing substack chat request: {e}', file=sys.stderr)
         return jsonify({'error': str(e)}), 500
+
+
+def _handle_substack_question(question):
+    """Answer a blog question using file_search only."""
+    response = client.models.generate_content(
+        model='gemini-2.5-flash',
+        contents=question,
+        config=types.GenerateContentConfig(
+            system_instruction=SUBSTACK_SYSTEM_PROMPT,
+            tools=[types.Tool(
+                file_search=types.FileSearch(
+                    file_search_store_names=[SUBSTACK_STORE_ID]
+                )
+            )],
+        )
+    )
+
+    answer = response.text if response.text else "I'm sorry, I couldn't find an answer to your question."
+    return jsonify({'answer': answer})
+
+
+def _handle_substack_booking(question):
+    """Handle a booking request using function_declarations only."""
+    response = client.models.generate_content(
+        model='gemini-2.5-flash',
+        contents=question,
+        config=types.GenerateContentConfig(
+            system_instruction=SUBSTACK_SYSTEM_PROMPT,
+            tools=[types.Tool(
+                function_declarations=[BOOKING_FUNCTION]
+            )],
+        )
+    )
+
+    # Check if Gemini returned a function call
+    if response.function_calls:
+        fc = response.function_calls[0]
+        if fc.name == 'request_meeting':
+            return _handle_booking_request(dict(fc.args))
+
+    # Gemini returned text instead (e.g. asking for missing details)
+    answer = response.text if response.text else "I'd be happy to help you book a meeting. Could you provide your name, preferred date, time, and how long the meeting should be?"
+    return jsonify({'answer': answer})
+
+
+def _handle_booking_request(args):
+    """Process a booking function call from Gemini."""
+    from booking_manager import create_pending_booking, init_db
+
+    init_db()
+
+    requester_name = args.get('requester_name', 'Unknown')
+    requester_email = args.get('requester_email', '')
+    meeting_date = args.get('meeting_date', '')
+    meeting_time = args.get('meeting_time', '')
+    duration = args.get('duration_minutes', 30)
+    purpose = args.get('purpose', '')
+
+    try:
+        token = create_pending_booking(
+            requester_name, requester_email,
+            meeting_date, meeting_time,
+            duration, purpose
+        )
+
+        confirmation_msg = (
+            f"I've submitted your meeting request to Anthony. "
+            f"Here are the details:\n\n"
+            f"- Date: {meeting_date}\n"
+            f"- Time: {meeting_time}\n"
+            f"- Duration: {duration} minutes\n"
+        )
+        if purpose:
+            confirmation_msg += f"- Purpose: {purpose}\n"
+
+        confirmation_msg += (
+            f"\nAnthony will review this request and "
+        )
+        if requester_email:
+            confirmation_msg += f"you'll receive a confirmation email at {requester_email} once it's approved."
+        else:
+            confirmation_msg += "you'll be notified once it's approved. Since you didn't provide an email, please check back here."
+
+        return jsonify({
+            'answer': confirmation_msg,
+            'booking_status': 'pending',
+            'booking_token': token
+        })
+
+    except ValueError as e:
+        # Calendar conflict — slot is not available
+        return jsonify({
+            'answer': str(e),
+            'booking_status': 'unavailable'
+        })
+
+    except Exception as e:
+        print(f'Error creating booking: {e}')
+        return jsonify({
+            'answer': 'Sorry, I had trouble submitting your meeting request. '
+                     'Please try again or contact Anthony directly.',
+            'error': str(e)
+        }), 500
 
 
 @app.route('/substack-stats', methods=['GET'])
@@ -166,6 +315,55 @@ def substack_stats():
     except Exception as e:
         print(f'Error fetching substack stats: {e}')
         return jsonify({'error': str(e)}), 500
+
+
+@app.route('/approve-booking/<token>', methods=['GET'])
+def approve_booking_endpoint(token):
+    """Anthony clicks this link from the approval email to approve a meeting."""
+    from booking_manager import approve_booking, init_db
+    init_db()
+    success, message = approve_booking(token)
+
+    if success:
+        return f"""
+        <html><body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+            <h1 style="color: #667eea;">Meeting Approved</h1>
+            <p>{message}</p>
+            <p>A calendar event has been created and the requester has been notified.</p>
+        </body></html>
+        """
+    else:
+        return f"""
+        <html><body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+            <h1 style="color: #e53e3e;">Could Not Approve</h1>
+            <p>{message}</p>
+        </body></html>
+        """
+
+
+@app.route('/decline-booking/<token>', methods=['GET'])
+def decline_booking_endpoint(token):
+    """Anthony clicks this link from the approval email to decline a meeting."""
+    from booking_manager import decline_booking, init_db
+    init_db()
+    decline_booking(token)
+    return f"""
+    <html><body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+        <h1 style="color: #888;">Meeting Declined</h1>
+        <p>The meeting request has been declined.</p>
+    </body></html>
+    """
+
+
+@app.route('/booking-status/<token>', methods=['GET'])
+def booking_status_endpoint(token):
+    """Check the status of a booking by its token."""
+    from booking_manager import get_booking_status, init_db
+    init_db()
+    status = get_booking_status(token)
+    if status:
+        return jsonify({'status': status})
+    return jsonify({'error': 'Booking not found'}), 404
 
 
 @app.route('/health', methods=['GET'])

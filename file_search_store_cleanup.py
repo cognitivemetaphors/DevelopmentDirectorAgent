@@ -24,7 +24,6 @@ Environment Variables (in .env):
 
 import os
 import sys
-import pickle
 import logging
 import argparse
 from datetime import datetime
@@ -38,7 +37,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google import genai
 
 # === CONFIGURATION ===
-ENV_FILE_PATH = r'.//.env'
+ENV_FILE_PATH = r'//var//www//joyandcaregiving//developmentdirectoragent//.env'
 
 # OAuth2 scopes for Gemini File Search
 SCOPES = [
@@ -120,14 +119,13 @@ def setup_logging(verbose=False):
 
 def get_oauth_credentials():
     """Get valid OAuth2 credentials from storage or run OAuth flow."""
-    token_file = os.getenv('TOKEN_FILE', r'C:\Users\acgar\OneDrive\Documents\GoogleAI\token.pickle')
+    token_file = os.getenv('TOKEN_FILE', r'C:\Users\acgar\OneDrive\Documents\GoogleAI\token.json')
     credentials_file = os.getenv('CREDENTIALS_FILE', r'C:\Users\acgar\OneDrive\Documents\GoogleAI\credentials.json')
 
     creds = None
 
     if os.path.exists(token_file):
-        with open(token_file, 'rb') as f:
-            creds = pickle.load(f)
+        creds = Credentials.from_authorized_user_file(token_file)
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
@@ -142,8 +140,8 @@ def get_oauth_credentials():
             flow = InstalledAppFlow.from_client_secrets_file(credentials_file, SCOPES)
             creds = flow.run_local_server(port=0)
 
-        with open(token_file, 'wb') as f:
-            pickle.dump(creds, f)
+        with open(token_file, 'w') as f:
+            f.write(creds.to_json())
             logger.info(f'Credentials saved to {token_file}')
 
     return creds
