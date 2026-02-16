@@ -120,6 +120,12 @@ def create_pending_booking(requester_name, requester_email, meeting_date,
     Checks calendar availability first. Raises ValueError if slot is busy.
     Returns the approval_token for reference.
     """
+    from zoneinfo import ZoneInfo
+    eastern = ZoneInfo('America/New_York')
+    requested_dt = datetime.fromisoformat(f'{meeting_date}T{meeting_time}:00').replace(tzinfo=eastern)
+    if requested_dt <= datetime.now(eastern):
+        raise ValueError('That date and time is in the past. Please choose a future date and time.')
+
     is_free, conflict = check_calendar_availability(
         meeting_date, meeting_time, duration_minutes
     )
@@ -281,13 +287,20 @@ def _create_calendar_event(name, email, date_str, time_str, duration, purpose):
             'dateTime': end_dt.isoformat(),
             'timeZone': 'America/New_York',
         },
+        'conferenceData': {
+            'createRequest': {
+                'requestId': uuid.uuid4().hex,
+                'conferenceSolutionKey': {'type': 'hangoutsMeet'},
+            },
+        },
     }
 
     if email:
         event_body['attendees'] = [{'email': email}]
 
     event = _get_calendar_service().events().insert(
-        calendarId=CALENDAR_ID, body=event_body, sendUpdates='all'
+        calendarId=CALENDAR_ID, body=event_body,
+        sendUpdates='all', conferenceDataVersion=1
     ).execute()
 
     return event.get('id')
