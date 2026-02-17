@@ -11,6 +11,7 @@ flowchart LR
         A --> J
         J["substack blog"]--substack entries-->L["substack_to_filesearchstore"]
         L --vector memory-->E
+        M[peloton_export]
         H --> I(["End"])
 ```
 
@@ -520,4 +521,80 @@ The Writing page fetches live post count from `/substack-stats` and compares it 
 ## Dependencies
 
 None — pure HTML, CSS, and vanilla JavaScript. No build step required.
+
+---
+
+# peloton_export.py
+
+Pulls all workout history and metrics from Peloton's unofficial API and exports to a local JSON file and a Google Sheets spreadsheet with three tabs.
+
+## How it works
+
+1. Authenticates with Peloton using a bearer token (extracted from browser DevTools)
+2. Auto-extracts user ID from the JWT token
+3. Fetches all workouts (paginated) with ride and instructor details
+4. Fetches per-workout performance metrics (heart rate, cadence, output, etc.)
+5. Fetches user overview/summary stats
+6. Saves everything to `peloton_export.json`
+7. Writes three tabs to a Google Sheet: Workouts, Summary, Performance Trends
+
+## Authentication
+
+Peloton deprecated their `/auth/login` endpoint in late 2024. The script uses a **bearer token** extracted from your browser:
+
+1. Log into [members.onepeloton.com](https://members.onepeloton.com)
+2. Open DevTools (F12) > Network tab
+3. Click around the site, filter by `api.onepeloton`
+4. Click any request, find `Authorization: Bearer <token>` in the request headers
+5. Copy the token (everything after `Bearer `) into `.env` as `PELOTON_BEARER_TOKEN`
+
+The token is valid for **~48 hours** and will need to be refreshed after expiration.
+
+## Usage
+
+```
+python peloton_export.py [--verbose] [--json-only] [--sheets-only]
+```
+
+### Options
+
+| Flag | Description |
+|------|-------------|
+| `--verbose`, `-v` | Enable debug logging |
+| `--json-only` | Export to JSON only, skip Google Sheets |
+| `--sheets-only` | Skip Peloton fetch, use existing JSON to update Sheets |
+
+## Google Sheets layout
+
+| Tab | Content |
+|-----|---------|
+| **Workouts** | One row per workout: date, type, title, instructor, duration, output, distance, calories, HR, cadence, resistance, speed, difficulty, rating |
+| **Summary** | Key-value overview: total workouts, calories, distance, output, workouts by type, date range |
+| **Performance Trends** | Monthly aggregates: workout count, calories, output, avg HR, distance |
+
+## Dependencies
+
+```
+pip install requests python-dotenv google-api-python-client google-auth google-auth-oauthlib
+```
+
+## Google APIs required
+
+- **Google Sheets API** — creating tabs and writing data
+
+## Environment variables (in `.env`)
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `PELOTON_BEARER_TOKEN` | Bearer token from browser DevTools | `eyJhbGciOi...` |
+| `PELOTON_SPREADSHEET_ID` | Google Sheets spreadsheet ID | `1pGJxrNfm...` |
+| `TOKEN_FILE` | Path to Google OAuth token file | `token.json` |
+| `CREDENTIALS_FILE` | Path to Google OAuth client secrets | `credentials.json` |
+
+## Prerequisites
+
+1. Enable Google Sheets API in Google Cloud Console
+2. Add `spreadsheets` scope to `get_token.py` and regenerate `token.json`
+3. Create a blank Google Sheet and add its ID to `.env`
+4. Extract a bearer token from Peloton (see Authentication above)
 
