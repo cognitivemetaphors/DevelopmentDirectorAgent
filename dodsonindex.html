@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Dodson-Garcia Collaboration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0d0c0a;
+      --vellum: #f4f0e6;
+      --gold: #b8960c;
+      --gold-light: #d4af37;
+      --rust: #8b3a2a;
+      --slate: #2e3a4e;
+      --slate-mid: #4a5568;
+      --rule: rgba(184,150,12,0.35);
+      --serif: 'Cormorant Garamond', 'Libre Baskerville', Georgia, serif;
+      --mono: 'Courier Prime', 'Courier New', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--vellum);
+      color: var(--ink);
+      font-family: var(--serif);
+      line-height: 1.75;
+      overflow-x: hidden;
+    }
+
+    /* ─── NOISE TEXTURE OVERLAY ─────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.5;
+    }
+
+    /* ─── MASTHEAD / HERO ────────────────────────────────────── */
+    header {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 100%, rgba(46,58,78,0.08) 0%, transparent 70%),
+        linear-gradient(180deg, #f4f0e6 0%, #ede8d8 100%);
+      border-bottom: 1px solid var(--rule);
+      overflow: hidden;
+    }
+
+    .header-rule-top {
+      position: absolute;
+      top: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(680px, 90%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 0.2s;
+    }
+    .header-rule-top .ornament {
+      font-size: 1.1rem;
+      color: var(--gold);
+      letter-spacing: 0.5em;
+      font-family: var(--mono);
+    }
+    .header-rule-top .rule-line {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--rust);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards 0.5s;
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      color: var(--slate);
+      margin-bottom: 0.25em;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 0.7s;
+    }
+    h1 em {
+      font-style: italic;
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .subtitle-block {
+      margin-top: 1.5rem;
+      max-width: 640px;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 1s;
+    }
+    .subtitle-block p {
+      font-size: clamp(1.05rem, 2vw, 1.25rem);
+      color: var(--slate-mid);
+      font-style: italic;
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    .header-badge {
+      margin-top: 3rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      border: 1px solid var(--rule);
+      border-radius: 2px;
+      padding: 0.6rem 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--slate-mid);
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 1.3s;
+    }
+    .header-badge::before, .header-badge::after {
+      content: '◆';
+      color: var(--gold);
+      font-size: 0.5rem;
+    }
+
+    .scroll-cue {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 1.8s;
+    }
+    .scroll-cue span {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+    .scroll-cue .arrow {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(180deg, var(--gold), transparent);
+      animation: pulse 2s ease infinite 2.5s;
+    }
+
+    /* ─── SECTIONS ───────────────────────────────────────────── */
+    section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 2rem;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--rule), transparent);
+    }
+
+    h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 300;
+      color: var(--slate);
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+    h2 em { font-style: italic; color: var(--gold); }
+
+    .lead {
+      font-size: clamp(1.05rem, 1.8vw, 1.2rem);
+      line-height: 1.8;
+      color: var(--slate-mid);
+      margin-bottom: 2rem;
+    }
+
+    /* ─── DIVIDER ────────────────────────────────────────────── */
+    .divider {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      opacity: 0.45;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--gold);
+    }
+    .divider .glyph {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      color: var(--gold);
+    }
+
+    /* ─── AXIOM PILLARS ──────────────────────────────────────── */
+    .axiom-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .axiom-card {
+      position: relative;
+      padding: 2rem 1.75rem;
+      background: rgba(46,58,78,0.04);
+      border: 1px solid var(--rule);
+      border-top: 3px solid var(--gold);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .axiom-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 36px rgba(46,58,78,0.1);
+    }
+
+    .axiom-tag {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    .axiom-card h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--slate);
+      margin-bottom: 0.75rem;
+    }
+    .axiom-card p {
+      font-size: 0.95rem;
+      color: var(--slate-mid);
+      line-height: 1.65;
+    }
+
+    /* ─── BENEFITS LIST ──────────────────────────────────────── */
+    .benefits-section {
+      background:
+        linear-gradient(135deg, rgba(46,58,78,0.05) 0%, transparent 60%);
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 6rem 0;
+    }
+    .benefits-section > .inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .benefits-list {
+      list-style: none;
+      margin-top: 2.5rem;
+      display: grid;
+      gap: 1.25rem;
+    }
+
+    .benefits-list li {
+      display: grid;
+      grid-template-columns: 2.5rem 1fr;
+      gap: 1rem;
+      align-items: start;
+      padding: 1.25rem 1.5rem;
+      background: var(--vellum);
+      border: 1px solid var(--rule);
+      border-left: 3px solid var(--gold-light);
+      transition: border-color 0.25s;
+    }
+    .benefits-list li:hover { border-left-color: var(--rust); }
+
+    .benefit-marker {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--gold);
+      font-weight: 700;
+      padding-top: 0.15rem;
+      letter-spacing: 0.05em;
+    }
+    .benefit-text strong {
+      display: block;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--slate);
+      margin-bottom: 0.3rem;
+    }
+    .benefit-text span {
+      font-size: 0.92rem;
+      color: var(--slate-mid);
+      font-style: italic;
+      line-height: 1.55;
+    }
+
+    /* ─── QUOTE BLOCK ────────────────────────────────────────── */
+    .quote-block {
+      margin: 4rem auto;
+      max-width: 720px;
+      padding: 3rem 3.5rem;
+      background: var(--slate);
+      color: var(--vellum);
+      position: relative;
+    }
+    .quote-block::before {
+      content: '\201C';
+      position: absolute;
+      top: -0.5rem;
+      left: 2rem;
+      font-size: 6rem;
+      color: var(--gold);
+      font-family: var(--serif);
+      line-height: 1;
+      opacity: 0.6;
+    }
+    .quote-block blockquote {
+      font-size: clamp(1.1rem, 2vw, 1.3rem);
+      font-style: italic;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+    .quote-block cite {
+      display: block;
+      margin-top: 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-style: normal;
+    }
+
+    /* ─── WHAT WE DO ─────────────────────────────────────────── */
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0;
+      margin-top: 3rem;
+      border: 1px solid var(--rule);
+    }
+    .process-step {
+      padding: 2.25rem 2rem;
+      border-right: 1px solid var(--rule);
+      position: relative;
+    }
+    .process-step:last-child { border-right: none; }
+    .process-num {
+      font-family: var(--mono);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--rule);
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+    .process-step h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--slate);
+      margin-bottom: 0.6rem;
+    }
+    .process-step p {
+      font-size: 0.88rem;
+      color: var(--slate-mid);
+      line-height: 1.6;
+    }
+
+    /* ─── CTA ────────────────────────────────────────────────── */
+    .cta-section {
+      background:
+        radial-gradient(ellipse 100% 70% at 50% 0%, rgba(184,150,12,0.07) 0%, transparent 60%),
+        var(--vellum);
+      border-top: 1px solid var(--rule);
+    }
+    .cta-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 7rem 2rem;
+      text-align: center;
+    }
+    .cta-inner h2 { margin-bottom: 1rem; }
+    .cta-inner .lead { max-width: 580px; margin: 0 auto 3rem; }
+
+    .cta-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.85rem 2.25rem;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--slate);
+      color: var(--vellum);
+      border: 2px solid var(--slate);
+    }
+    .btn-primary:hover {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--ink);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--slate);
+      border: 2px solid var(--slate);
+    }
+    .btn-secondary:hover {
+      background: var(--slate);
+      color: var(--vellum);
+    }
+    .btn .arrow-icon { font-size: 0.8rem; }
+
+    /* ─── LOGOS / FORMAL DISPLAY ─────────────────────────────── */
+    .formal-block {
+      background: rgba(46,58,78,0.03);
+      border: 1px solid var(--rule);
+      padding: 2rem 2.5rem;
+      margin: 2.5rem 0;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      color: var(--slate-mid);
+      line-height: 1.8;
+    }
+    .formal-block .theorem {
+      color: var(--slate);
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────────── */
+    footer {
+      background: var(--slate);
+      color: rgba(244,240,230,0.55);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+    footer .footer-mark {
+      font-size: 1.5rem;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+    }
+    footer p {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    footer a {
+      color: var(--gold-light);
+      text-decoration: none;
+    }
+    footer a:hover { text-decoration: underline; }
+
+    /* ─── ANIMATIONS ─────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ─── WORKBENCH ──────────────────────────────────────────── */
+    .workbench-section {
+      background: var(--slate);
+      border-top: 1px solid rgba(184,150,12,0.25);
+      border-bottom: 1px solid rgba(184,150,12,0.25);
+      padding: 6rem 0;
+    }
+    .workbench-section > .inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    .workbench-section .section-label {
+      color: var(--gold);
+    }
+    .workbench-section .section-label::after {
+      background: linear-gradient(90deg, rgba(184,150,12,0.4), transparent);
+    }
+    .workbench-section h2 {
+      color: var(--vellum);
+    }
+    .workbench-section .lead {
+      color: rgba(244,240,230,0.65);
+    }
+
+    .workbench-interface {
+      margin-top: 2.5rem;
+      border: 1px solid rgba(184,150,12,0.3);
+      background: rgba(0,0,0,0.25);
+    }
+    .workbench-chrome {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 1rem;
+      background: rgba(184,150,12,0.08);
+      border-bottom: 1px solid rgba(184,150,12,0.2);
+    }
+    .workbench-chrome .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(184,150,12,0.35);
+    }
+    .workbench-chrome .chrome-label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(184,150,12,0.7);
+      margin-left: auto;
+    }
+
+    .workbench-body {
+      padding: 1.75rem;
+    }
+
+    .workbench-response {
+      min-height: 120px;
+      margin-bottom: 1.5rem;
+      font-family: var(--serif);
+      font-size: 1rem;
+      line-height: 1.75;
+      color: var(--vellum);
+    }
+    .workbench-response.empty {
+      display: flex;
+      align-items: center;
+      color: rgba(244,240,230,0.25);
+      font-style: italic;
+      font-size: 0.9rem;
+    }
+    .workbench-response.loading {
+      color: rgba(184,150,12,0.7);
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+    }
+    .workbench-response.error {
+      color: #c0392b;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+    }
+
+    .workbench-divider {
+      height: 1px;
+      background: linear-gradient(90deg, rgba(184,150,12,0.3), transparent);
+      margin-bottom: 1.25rem;
+    }
+
+    .workbench-input-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-end;
+    }
+    .workbench-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(184,150,12,0.4);
+      color: var(--vellum);
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      line-height: 1.6;
+      padding: 0.5rem 0;
+      resize: none;
+      outline: none;
+      min-height: 2.5rem;
+      max-height: 120px;
+    }
+    .workbench-input::placeholder {
+      color: rgba(244,240,230,0.25);
+    }
+    .workbench-input:focus {
+      border-bottom-color: var(--gold);
+    }
+    .workbench-submit {
+      background: transparent;
+      border: 1px solid rgba(184,150,12,0.5);
+      color: var(--gold);
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.55rem 1.25rem;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+    .workbench-submit:hover:not(:disabled) {
+      background: var(--gold);
+      color: var(--ink);
+    }
+    .workbench-submit:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .process-grid { grid-template-columns: 1fr; }
+      .process-step { border-right: none; border-bottom: 1px solid var(--rule); }
+      .quote-block { padding: 2.5rem 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HERO ──────────────────────────────────────────────────── -->
+<header>
+  <div class="header-rule-top">
+    <div class="ornament">✦ · · · ✦ · · · ✦</div>
+    <div class="rule-line"></div>
+  </div>
+
+  <p class="eyebrow">Agentic Intelligence · Founded on First Principles</p>
+
+  <h1>The <em>Dodson–Garcia</em><br>Collaboration</h1>
+
+  <div class="subtitle-block">
+    <p>Where the formal grammar of rational discourse meets the architecture of intelligent agents — solving real business problems from the ground up.</p>
+  </div>
+
+  <div class="header-badge">Logos · Hypostasis · Agency · Results</div>
+
+  <div class="scroll-cue">
+    <span>Explore</span>
+    <div class="arrow"></div>
+  </div>
+</header>
+
+
+<!-- ── INTRODUCTION ──────────────────────────────────────────── -->
+<section class="reveal">
+  <p class="section-label">Our Foundation</p>
+  <h2>Grounded in an <em>Irreducible</em> Logic</h2>
+  <p class="lead">
+    The Dodson–Garcia Collaboration applies a rigorous body of philosophical and formal work — the <em>Logos–Hypostasis Pincer</em> — as the governing framework for building agentic AI solutions. This is not metaphor. It is method.
+  </p>
+  <p class="lead">
+    The derivation proves, from the performative conditions of rational discourse alone, that an objective logical order exists (<em>Logos</em>), that conscious subjects are irreducible (<em>Hypostasis</em>), and that pure mechanical reductionism is self-refuting. These three results map directly onto how we architect, evaluate, and deploy intelligent agents that <em>judge</em> rather than merely compute.
+  </p>
+
+  <div class="formal-block">
+    <div class="theorem">Main Theorem — L ∧ ∃x C(x) ∧ ¬F</div>
+    <div>L &nbsp;→ An objective Logos-order exists — the normative ground of all valid inference</div>
+    <div>C(x) → At least one conscious hypostasis exists — the bearer of genuine warrant</div>
+    <div>¬F &nbsp;→ Universal causal reductionism is self-refuting — judgment cannot be eliminated</div>
+  </div>
+</section>
+
+<div class="divider"><span class="glyph">◆ · ◆ · ◆</span></div>
+
+
+<!-- ── AXIOM PILLARS ──────────────────────────────────────────── -->
+<section class="reveal">
+  <p class="section-label">The Canons</p>
+  <h2>Seven Axioms. One <em>Architecture</em>.</h2>
+  <p class="lead">
+    The seven axioms of the Logos–Hypostasis Pincer each name a structural condition that no coherent rational system can deny. We translate each into a governing design principle for agentic solutions.
+  </p>
+
+  <div class="axiom-grid">
+    <div class="axiom-card">
+      <div class="axiom-tag">A1 · Performance Axiom</div>
+      <h3>Irrefutable Engagement</h3>
+      <p>Any agent that assesses, objects, or acts instantiates rational discourse. Our systems are designed with this performative bedrock — they operate from genuine engagement, not scripted mimicry.</p>
+    </div>
+    <div class="axiom-card">
+      <div class="axiom-tag">A2 · Judgment–Licensing Bridge</div>
+      <h3>Beyond Rule-Execution</h3>
+      <p>Judgment requires non-syntactic licensing — the regress of rules terminates only in genuine inference. We build agents that license transitions, not just execute instructions.</p>
+    </div>
+    <div class="axiom-card">
+      <div class="axiom-tag">A3 · Licensing–Normative Bridge</div>
+      <h3>Endorsement, Not Execution</h3>
+      <p>To license a transition is to endorse it as valid. Our architecture distinguishes between outputs that are merely produced and outputs that are genuinely warranted.</p>
+    </div>
+    <div class="axiom-card">
+      <div class="axiom-tag">A4 · Discursive Force Condition</div>
+      <h3>Claims Require Warrant</h3>
+      <p>A claim without warrant is noise. Every agent output in our pipeline is traceable to a warranted inferential chain — eliminating hallucination at the structural level.</p>
+    </div>
+    <div class="axiom-card">
+      <div class="axiom-tag">A5 · Warrant–Subject Bridge</div>
+      <h3>Participation Requires Subsistence</h3>
+      <p>Warrant must belong to a subject. Human judgment remains the necessary bearer of operative normative relations — our agentic systems amplify, never displace, that judgment.</p>
+    </div>
+    <div class="axiom-card">
+      <div class="axiom-tag">A6 · Normative Aspect–Logos Bridge</div>
+      <h3>Subsistence Requires Participation</h3>
+      <p>Every act of judgment participates in an objective logical order. We design toward that order — building solutions that are not just functional but genuinely correct.</p>
+    </div>
+    <div class="axiom-card">
+      <div class="axiom-tag">A7 · Warrant–Cause Exclusivity</div>
+      <h3>Normativity Excludes Mechanism</h3>
+      <p>A fully caused output leaves no normative remainder. We build systems where warrant is operative — where the reasoning makes a real difference to the result.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── BENEFITS ───────────────────────────────────────────────── -->
+<div class="benefits-section">
+  <div class="inner">
+    <div class="reveal">
+      <p class="section-label">Why It Works</p>
+      <h2>The Canon Advantage: <em>Benefits</em> for Business</h2>
+      <p class="lead">
+        Applying the Logos–Hypostasis canons to agentic solution design delivers measurable, structural advantages that purely empirical or tool-first approaches cannot replicate.
+      </p>
+    </div>
+
+    <ul class="benefits-list reveal">
+      <li>
+        <span class="benefit-marker">01</span>
+        <div class="benefit-text">
+          <strong>Hallucination-Resistant Outputs</strong>
+          <span>Because A4 requires every claim to carry warrant, our pipelines are architecturally disposed against ungrounded assertions — reducing costly errors before they reach decision-makers.</span>
+        </div>
+      </li>
+      <li>
+        <span class="benefit-marker">02</span>
+        <div class="benefit-text">
+          <strong>Judgment That Terminates — No Regress</strong>
+          <span>A2's non-syntactic licensing principle eliminates the infinite rule-application regress that stalls naïve automation. Agents know when to act and why — without waiting for an instruction they will never receive.</span>
+        </div>
+      </li>
+      <li>
+        <span class="benefit-marker">03</span>
+        <div class="benefit-text">
+          <strong>Human Authority Preserved at Every Layer</strong>
+          <span>A5 ensures warrant ultimately belongs to a conscious subject. Your team retains operative authority — agents amplify human judgment rather than silently usurping it.</span>
+        </div>
+      </li>
+      <li>
+        <span class="benefit-marker">04</span>
+        <div class="benefit-text">
+          <strong>Auditability Grounded in Normative Structure</strong>
+          <span>When every inferential transition is licensed rather than merely executed, audit trails carry logical weight. Compliance and review become tractable because the reasoning is genuinely traceable.</span>
+        </div>
+      </li>
+      <li>
+        <span class="benefit-marker">05</span>
+        <div class="benefit-text">
+          <strong>Reductionism-Proof Architecture</strong>
+          <span>¬F proves that pure mechanical reduction is self-refuting. Solutions built on this insight are immune to the class of failures that plague over-automated systems — they retain a normative core that causation alone cannot eliminate.</span>
+        </div>
+      </li>
+      <li>
+        <span class="benefit-marker">06</span>
+        <div class="benefit-text">
+          <strong>Participation and Subsistence in Productive Tension</strong>
+          <span>The two-level grammar of L and C(x) maps directly onto organizational design: shared norms (Logos) and accountable individuals (Hypostasis) operating in irreducible coordination — the formal blueprint for scalable agentic teams.</span>
+        </div>
+      </li>
+      <li>
+        <span class="benefit-marker">07</span>
+        <div class="benefit-text">
+          <strong>Performatively Irrefutable Foundations</strong>
+          <span>A1 is not a hypothesis — it is a transcendental condition. Building on it means your solution rests on ground that cannot be destabilized by the next shift in empirical consensus or model capability.</span>
+        </div>
+      </li>
+      <li>
+        <span class="benefit-marker">08</span>
+        <div class="benefit-text">
+          <strong>Normative Remainder in Every Output</strong>
+          <span>A7 guarantees that warrant is operative, not epiphenomenal. This translates into solutions where the reasoning matters — where the quality of inference shapes outcomes, not just the statistical weight of training data.</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ── QUOTE ──────────────────────────────────────────────────── -->
+<section>
+  <div class="quote-block reveal">
+    <blockquote>
+      The Logos-order is real. Consciousness is irreducible. The two-level structure of participation and subsistence is the grammar of rational discourse. These results cannot be retracted by any subsequent argument, because any subsequent argument presupposes them.
+    </blockquote>
+    <cite>— The Logos–Hypostasis Pincer · Formal Derivation · Section VII</cite>
+  </div>
+</section>
+
+
+<!-- ── HOW WE WORK ────────────────────────────────────────────── -->
+<div class="divider"><span class="glyph">◆ · ◆ · ◆</span></div>
+
+<section class="reveal">
+  <p class="section-label">Our Process</p>
+  <h2>From Problem to <em>Warranted</em> Solution</h2>
+  <p class="lead">Every engagement follows a canon-governed arc — from the performative reality of your business problem to a deployed agentic solution with genuine normative grounding.</p>
+
+  <div class="process-grid">
+    <div class="process-step">
+      <div class="process-num">I</div>
+      <h3>Problem Instantiation</h3>
+      <p>Your challenge is the instantiation of A1. We begin where you are — with the undeniable fact of a business problem that demands judgment.</p>
+    </div>
+    <div class="process-step">
+      <div class="process-num">II</div>
+      <h3>Inferential Mapping</h3>
+      <p>We identify every licensed transition your process requires — and the non-syntactic judgments that must govern them. No regress. No stall.</p>
+    </div>
+    <div class="process-step">
+      <div class="process-num">III</div>
+      <h3>Warrant Architecture</h3>
+      <p>We design the normative structure of your agentic pipeline — ensuring every claim is grounded, every output warranted, every agent accountable.</p>
+    </div>
+    <div class="process-step">
+      <div class="process-num">IV</div>
+      <h3>Deployment & Audit</h3>
+      <p>We deploy solutions with built-in auditability — normative remainder preserved, human authority maintained, reductionist collapse foreclosed.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── CTA ────────────────────────────────────────────────────── -->
+<div class="cta-section">
+  <div class="cta-inner reveal">
+    <p class="section-label" style="justify-content:center; margin-bottom:1rem;">◆ Present Your Problem ◆</p>
+    <h2>Your Business Problem<br>Deserves <em>Warranted</em> Answers</h2>
+    <p class="lead">
+      Connect with Anthony Garcia to present your challenge for consideration. Every genuine business problem is an instantiation of A1 — and that means it can be solved from first principles.
+    </p>
+
+    <div class="cta-buttons">
+      <a href="https://linkedin.com/in/acgarcia21" target="_blank" rel="noopener" class="btn btn-primary">
+        <span class="arrow-icon">↗</span> Connect on LinkedIn
+      </a>
+      <a href="https://acgarcia21.substack.com" target="_blank" rel="noopener" class="btn btn-secondary">
+        <span class="arrow-icon">↗</span> Read on Substack
+      </a>
+    </div>
+
+    <p style="margin-top:2.5rem; font-family:var(--mono); font-size:0.7rem; letter-spacing:0.15em; color:var(--slate-mid);">
+      Present your problem · Request a consideration · Begin the derivation
+    </p>
+  </div>
+</div>
+
+
+<!-- ── WORKBENCH ───────────────────────────────────────────────── -->
+<div class="workbench-section">
+  <div class="inner reveal">
+    <p class="section-label">The Workbench</p>
+    <h2>Query the <em>Framework</em></h2>
+    <p class="lead">
+      Engage directly with the Dodson–Garcia body of work. Ask about the axioms, the formal derivation, the architecture of warranted judgment, or how the framework applies to a specific problem.
+    </p>
+
+    <div class="workbench-interface">
+      <div class="workbench-chrome">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <span class="chrome-label">consciousness · logos–hypostasis</span>
+      </div>
+      <div class="workbench-body">
+        <div class="workbench-response empty" id="wb-response">
+          The framework awaits your question.
+        </div>
+        <div class="workbench-divider"></div>
+        <div class="workbench-input-row">
+          <textarea
+            id="wb-input"
+            class="workbench-input"
+            rows="1"
+            placeholder="Ask about the axioms, the derivation, or how the framework applies…"
+          ></textarea>
+          <button id="wb-submit" class="workbench-submit">Submit ↵</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── FOOTER ─────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-mark">✦</div>
+  <p>The Dodson–Garcia Collaboration &nbsp;·&nbsp; Agentic Solutions from First Principles</p>
+  <p style="margin-top:0.75rem;">
+    <a href="https://linkedin.com/in/acgarcia21" target="_blank" rel="noopener">LinkedIn</a>
+    &nbsp;·&nbsp;
+    <a href="https://acgarcia21.substack.com" target="_blank" rel="noopener">Substack</a>
+  </p>
+</footer>
+
+
+<script>
+  // ── WORKBENCH ──────────────────────────────────────────────
+  const SERVER = 'http://143.42.1.253:5000';
+
+  const wbInput  = document.getElementById('wb-input');
+  const wbSubmit = document.getElementById('wb-submit');
+  const wbResp   = document.getElementById('wb-response');
+
+  function setResponse(text, cls) {
+    wbResp.className = 'workbench-response' + (cls ? ' ' + cls : '');
+    wbResp.textContent = text;
+  }
+
+  async function submitQuestion() {
+    const question = wbInput.value.trim();
+    if (!question) return;
+
+    wbSubmit.disabled = true;
+    setResponse('Consulting the framework…', 'loading');
+
+    try {
+      const res = await fetch(`${SERVER}/consciousness`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question })
+      });
+      const data = await res.json();
+      if (data.error) {
+        setResponse(`Error: ${data.error}`, 'error');
+      } else {
+        setResponse(data.answer, '');
+      }
+    } catch (err) {
+      setResponse('Could not reach the server. Ensure the chat server is running.', 'error');
+    } finally {
+      wbSubmit.disabled = false;
+    }
+  }
+
+  wbSubmit.addEventListener('click', submitQuestion);
+
+  wbInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      submitQuestion();
+    }
+  });
+
+  // Auto-resize textarea
+  wbInput.addEventListener('input', () => {
+    wbInput.style.height = 'auto';
+    wbInput.style.height = wbInput.scrollHeight + 'px';
+  });
+
+  // ── SCROLL-REVEAL ───────────────────────────────────────────
+  // Scroll-reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => io.observe(r));
+</script>
+</body>
+</html>
