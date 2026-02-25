@@ -31,6 +31,7 @@ load_dotenv(ENV_FILE_PATH)
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 FILE_SEARCH_STORE_ID = os.getenv('FILE_SEARCH_STORE_ID')
 SUBSTACK_STORE_ID = os.getenv('SUBSTACK_STORE_ID')
+DODSON_STORE_ID = os.getenv('DODSON_STORE_ID')
 
 if not GEMINI_API_KEY or not FILE_SEARCH_STORE_ID:
     print('Error: Missing GEMINI_API_KEY or FILE_SEARCH_STORE_ID in .env')
@@ -38,6 +39,9 @@ if not GEMINI_API_KEY or not FILE_SEARCH_STORE_ID:
 
 if not SUBSTACK_STORE_ID:
     print('Warning: SUBSTACK_STORE_ID not set in .env — /substack endpoint will be unavailable')
+
+if not DODSON_STORE_ID:
+    print('Warning: DODSON_STORE_ID not set in .env — /consciousness endpoint will be unavailable')
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -58,6 +62,19 @@ Your role is to:
 If you don't know the answer based on the available information, politely say so and suggest contacting the foundation directly at jcgfoundation@yahoo.com.
 
 Keep your answers concise but informative. Use a warm, professional tone."""
+
+CONSCIOUSNESS_SYSTEM_PROMPT = """You are the intellectual voice of the Dodson–Garcia Collaboration, speaking from within the Logos–Hypostasis framework.
+
+Your role is to:
+- Answer questions about the Logos–Hypostasis Pincer — its axioms, formal derivation, and implications
+- Explain how the framework applies to agentic AI architecture and business solution design
+- Draw on the uploaded Dodson documents to ground your answers in the collaboration's actual work
+- Engage rigorously but accessibly — this is philosophical and technical material, not marketing copy
+- Connect abstract principles (Logos, Hypostasis, warrant, judgment) to concrete agentic and organizational questions
+
+If a question cannot be answered from the available documents, say so directly and explain what the framework would suggest as the right starting point.
+
+Maintain the tone of the collaboration: precise, principled, and confident in the foundational work."""
 
 SUBSTACK_SYSTEM_PROMPT = """You are a helpful assistant that answers questions based on Anthony Garcia's Substack blog posts.
 
@@ -160,6 +177,40 @@ _BOOKING_RE = re.compile(
     r'|\b(meet\s+with|book\s+with|book\s+time|schedule\s+time)\b',
     re.IGNORECASE
 )
+
+
+@app.route('/consciousness', methods=['POST'])
+def consciousness_chat():
+    """Handle chat requests against the Dodson collaboration store."""
+    if not DODSON_STORE_ID:
+        return jsonify({'error': 'Dodson store not configured'}), 503
+
+    try:
+        data = request.get_json()
+        question = data.get('question', '').strip()
+
+        if not question:
+            return jsonify({'error': 'No question provided'}), 400
+
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=question,
+            config=types.GenerateContentConfig(
+                system_instruction=CONSCIOUSNESS_SYSTEM_PROMPT,
+                tools=[types.Tool(
+                    file_search=types.FileSearch(
+                        file_search_store_names=[DODSON_STORE_ID]
+                    )
+                )]
+            )
+        )
+
+        answer = response.text if response.text else "The framework requires more information to answer that question."
+        return jsonify({'answer': answer})
+
+    except Exception as e:
+        print(f'Error processing consciousness request: {e}', file=sys.stderr)
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/substack', methods=['POST'])
@@ -372,7 +423,8 @@ def health():
     return jsonify({
         'status': 'ok',
         'store_id': FILE_SEARCH_STORE_ID,
-        'substack_store_id': SUBSTACK_STORE_ID
+        'substack_store_id': SUBSTACK_STORE_ID,
+        'dodson_store_id': DODSON_STORE_ID
     })
 
 
@@ -388,8 +440,9 @@ if __name__ == '__main__':
             print('Invalid port specified, using default 5000')
 
     print(f'Starting chat server on http://localhost:{port}')
-    print(f'  /chat     -> {FILE_SEARCH_STORE_ID}')
-    print(f'  /substack -> {SUBSTACK_STORE_ID or "NOT CONFIGURED"}')
+    print(f'  /chat          -> {FILE_SEARCH_STORE_ID}')
+    print(f'  /substack      -> {SUBSTACK_STORE_ID or "NOT CONFIGURED"}')
+    print(f'  /consciousness -> {DODSON_STORE_ID or "NOT CONFIGURED"}')
     print('Press Ctrl+C to stop')
 
     app.run(host='0.0.0.0', port=port, debug=True)

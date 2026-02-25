@@ -73,6 +73,37 @@
             margin: 0;
         }
 
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: #667eea;
+            border-radius: 3px;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
         nav a {
             text-decoration: none;
             color: #667eea;
@@ -580,8 +611,26 @@
         }
 
         @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
             nav ul {
-                gap: 1rem;
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                gap: 0;
+                padding-top: 1rem;
+            }
+
+            nav ul.open {
+                display: flex;
+            }
+
+            nav ul li a {
+                display: block;
+                padding: 0.75rem 0;
+                border-top: 1px solid #eee;
             }
 
             .hero h1 {
@@ -594,7 +643,7 @@
             }
 
             .nav-container {
-                justify-content: center;
+                flex-wrap: wrap;
             }
 
             .company-name {
@@ -615,6 +664,11 @@
 		    <img src="images/logo.png" alt="Cognitive Metaphors Logo" class="logo-image" style="width: 5%; height: 5%; object-hit: contain;"> 
 	    <div class="company-name">Cognitive Metaphors</div>
             </div>
+            <button class="hamburger" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             <ul>
                 <li><a href="#home" class="nav-link active">Home</a></li>
                 <li><a href="#about" class="nav-link">About</a></li>
@@ -814,6 +868,15 @@
     </div>
 
     <script>
+        // Hamburger menu toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navUl = document.querySelector('nav ul');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navUl.classList.toggle('open');
+        });
+
         // Navigation
         const navLinks = document.querySelectorAll('.nav-link');
         const pages = document.querySelectorAll('.page');
@@ -832,6 +895,10 @@
                 
                 // Scroll to top
                 window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                // Close hamburger menu on mobile
+                hamburger.classList.remove('active');
+                navUl.classList.remove('open');
             });
         });
 
