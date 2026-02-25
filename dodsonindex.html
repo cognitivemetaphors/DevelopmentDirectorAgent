@@ -934,7 +934,7 @@
             id="wb-input"
             class="workbench-input"
             rows="1"
-            placeholder="Ask about the axioms, the derivation, or how the framework applies…"
+            placeholder="Ask about the axioms, the derivation, or how the framework applies… (type 'clear' to reset conversation)"
           ></textarea>
           <button id="wb-submit" class="workbench-submit">Submit ↵</button>
         </div>
@@ -972,6 +972,13 @@
   async function submitQuestion() {
     const question = wbInput.value.trim();
     if (!question) return;
+
+    // Handle clear command locally
+    if (question.toLowerCase() === 'clear') {
+      wbInput.value = '';
+      setResponse('Conversation history cleared. The framework awaits your question.', '');
+      return;
+    }
 
     wbSubmit.disabled = true;
     setResponse('Consulting the framework…', 'loading');

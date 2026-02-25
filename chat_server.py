@@ -50,6 +50,9 @@ CORS(app)  # Enable CORS for cross-origin requests from the frontend
 # Initialize Gemini client
 client = genai.Client(api_key=GEMINI_API_KEY)
 
+# Conversation history for consciousness endpoint
+consciousness_history = []
+
 # System prompts
 SYSTEM_PROMPT = """You are a helpful assistant for the Joy & Caregiving Foundation and St. Anthony Development and Learning Center.
 
@@ -192,9 +195,22 @@ def consciousness_chat():
         if not question:
             return jsonify({'error': 'No question provided'}), 400
 
+        # Check for clear command
+        if question.lower().strip() == 'clear':
+            consciousness_history.clear()
+            return jsonify({'answer': 'Conversation history cleared.'})
+
+        # Build context from history
+        context_parts = []
+        for entry in consciousness_history:
+            context_parts.append(f"User: {entry['question']}")
+            context_parts.append(f"AI: {entry['answer']}")
+        context_parts.append(f"User: {question}")
+        contents = "\n".join(context_parts)
+
         response = client.models.generate_content(
             model='gemini-2.5-flash',
-            contents=question,
+            contents=contents,
             config=types.GenerateContentConfig(
                 system_instruction=CONSCIOUSNESS_SYSTEM_PROMPT,
                 tools=[types.Tool(
@@ -206,6 +222,10 @@ def consciousness_chat():
         )
 
         answer = response.text if response.text else "The framework requires more information to answer that question."
+        
+        # Add to history
+        consciousness_history.append({'question': question, 'answer': answer})
+        
         return jsonify({'answer': answer})
 
     except Exception as e:
